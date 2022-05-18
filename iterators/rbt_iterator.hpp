@@ -13,108 +13,108 @@ namespace ft {
 		int color;
 	};
 
-template < class T, class node_type >
-class	rbt_iterator
-{
-	
-	public:
+	template <class Key, class T, bool isconst = false>
+	struct map_iterator {
+		
+		/* ************************************************************************** */
+		/*                          Member type Definition                            */
+		/* ************************************************************************** */
+		
+		typedef map_iterator<Key, T, isconst>   					self;
+		typedef std::ptrdiff_t                  					difference_type;
+		typedef std::bidirectional_iterator_tag 					iterator_category;
+		typedef ft::pair<const Key, T>          					value_type;
+		
+		typedef typename choose_type<isconst,
+				const value_type&, value_type&>::type       		reference;
+		typedef typename choose_type<isconst,
+				const value_type*, value_type*>::type       		pointer;
+		typedef typename choose_type<isconst,
+				const Tree<value_type>*, Tree<value_type>*>::type   nodeptr;
 
-		typedef T 											value_type;
-		typedef value_type * 								pointer;
-		typedef value_type & 								reference;
-		typedef const value_type *							const_pointer;
-		typedef const value_type &							const_reference;
-		typedef std::bidirectional_iterator_tag 			iterator_category;
-		typedef std::ptrdiff_t								difference_type;
-		typedef	node_type*									node_pointer;
+		
+		/* ************************************************************************** */
+		/*                               Constructor:                                 */
+		/* ************************************************************************** */		
+		
+		map_iterator() : ptr_(NULL) {};
+		map_iterator(nodeptr ptr) : ptr_(ptr) {};
+		map_iterator(const map_iterator<Key, T, false> &copy) : ptr_(copy.ptr_) {};
+		map_iterator(const map_iterator<Key, T, true> &copy) : ptr_(copy.ptr_) {};
 
-		rbt_iterator( void ) :_t_null(NULL), _root(NULL), _ptr(NULL) {}
-		rbt_iterator( node_pointer nd, const node_pointer& t_null, const node_pointer& root ) : _t_null(t_null), _root(root), _ptr(nd) {}
-		rbt_iterator( const rbt_iterator &to_cpy ) : _t_null(to_cpy._t_null), _root(to_cpy._root),_ptr(to_cpy._ptr) {}
-		rbt_iterator & operator=( const rbt_iterator& assign )
-		{
-			if (&assign != this)
+		virtual ~map_iterator() {};
+
+		
+		
+		self   &operator = (const self &rhs) {
+		ptr_ = rhs.ptr_;
+		return *this;
+		};
+
+		self     &operator ++ () {
+		if ((ptr_->right_ && ptr_->right_->parent_ != ptr_)
+			|| (ptr_->left_ && ptr_->left_->parent_ != ptr_))
+			ptr_ = ptr_->left_;
+		else if (ptr_->right_) {
+			ptr_ = ptr_->right_;
+			while (ptr_->left_)
+			ptr_ = ptr_->left_;
+		}
+		else {
+			nodeptr tmp = ptr_->parent_;
+
+			while (ptr_ == tmp->right_) {
+			ptr_ = tmp;
+			tmp = tmp->parent_;
+			}
+			if (ptr_->right_ != tmp)
+			ptr_ = tmp;
+		}
+		return *this;
+		};
+
+		self     operator ++ (int) {
+		self tmp = *this;
+		++(*this);
+		return tmp;
+		};
+
+		self     &operator -- () {
+		
+			if ((ptr_->right_ && ptr_->right_->parent_ != ptr_) || (ptr_->left_ && ptr_->left_->parent_ != ptr_))
+				ptr_ = ptr_->right_;
+			else if (ptr_->left_)
 			{
-				_t_null = assign._t_null;
-				_root = assign._root;
-				_ptr = assign._ptr;
+				ptr_ = ptr_->left_;
+				while (ptr_->right_)
+					ptr_ = ptr_->right_;
+			}
+			else 
+			{
+				nodeptr tmp = ptr_->parent_;
+				while (ptr_ == tmp->left_)
+				{
+					ptr_ = tmp;
+					tmp = tmp->parent_;
+				}
+				ptr_ = tmp;
 			}
 			return *this;
-		}
+		};
 
-		operator	rbt_iterator<value_type const, node_type>(void) const {
-			return (rbt_iterator<value_type const, node_type>(_ptr, _t_null, _root));
-		}
+		self     operator -- (int) {
+			
+			self tmp = *this;
+			--(*this);
+			return tmp;
+		};
 
-		~rbt_iterator( void ) {}
+		bool      operator == (const self &rhs) const   { return ptr_ == rhs.ptr_; };
+		bool      operator != (const self &rhs) const   { return ptr_ != rhs.ptr_; };
+		reference operator *  () const                  { return ptr_->pair_; };
+		pointer   operator -> () const                  { return &ptr_->pair_; };
 
-		bool	operator==(const rbt_iterator & rhs) const
-		{
-			return ((_ptr == rhs._ptr));
-		}
-
-		bool	operator!=(const rbt_iterator & rhs) const 
-		{
-			return ((_ptr != rhs._ptr));
-		}
-
-		pointer	operator->( void )
-		{
-			return (_ptr->operator->());
-		}
-
-		const_pointer	operator->( void ) const
-		{
-			return (_ptr->operator->());
-		}
-
-		reference	operator*( void )
-		{
-			return (_ptr->operator*());
-		}
-
-		const_reference	operator*( void ) const
-		{
-			return (_ptr->operator*());
-		}
-
-		rbt_iterator &	operator++(void)
-		{
-			_ptr = _ptr->successor();
-			return (*this);
-		}
-
-		rbt_iterator	operator++(int)
-		{
-			rbt_iterator tmp(*this);
-			_ptr = _ptr->successor();
-			return (tmp);
-		}
-
-		rbt_iterator &	operator--(void)
-		{
-			if (_ptr == _t_null)
-				_ptr = _root->maximum();
-			else
-				_ptr = _ptr->predecessor();
-			return (*this);
-		}
-
-		rbt_iterator	operator--(int)
-		{
-			rbt_iterator tmp(*this);
-			if (_ptr == _t_null)
-				_ptr = _root->maximum();
-			else
-				_ptr = _ptr->predecessor();
-			return (tmp);
-		}
-
-	private:
-		node_pointer _t_null;
-		node_pointer _root;
-		node_pointer _ptr;
-};
-
+		nodeptr ptr_;
+	};
 };
 #endif
