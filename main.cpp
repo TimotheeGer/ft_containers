@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tnave <tnave@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/26 16:01:05 by tigerber          #+#    #+#             */
-/*   Updated: 2022/04/26 18:01:49 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/05/13 17:18:32 by tnave            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,74 +14,40 @@
 #include <string>
 #include <iterator> // For std::forward_iterator_tag
 #include <cstddef>  // For std::ptrdiff_t
-
-class Integers
-{
-	private:	
-	    
-		int m_data[200];
-		
-	public:
-		
-
-		struct const_Iterator { 
-
-			using iterator_category = std::forward_iterator_tag;
-    		using difference_type   = std::ptrdiff_t;
-    		using value_type        = int;
-    		using pointer           = int*;  // or also value_type*
-    		using reference         = int&;  // or also value_type&	
-			
-			const_Iterator(pointer ptr) : m_ptr(ptr) {};
-			
-			const reference operator*() const { return *m_ptr; };
-
-			const pointer operator->() { return m_ptr; };
-
-			const_Iterator& operator++() { 
-
-				m_ptr++;
-				return *this;
-			};
-
-			const_Iterator operator++(int) {
-				
-				const_Iterator tmp = *this;
-				++(*this);
-				return tmp;
-			};
-
-			friend bool operator==(const_Iterator& const a, const_Iterator& const b) {
-				
-				return a.m_ptr == b.m_ptr;
-			}
-			
-			friend bool operator!=(const_Iterator& const a, const_Iterator& const b) {
-				
-				return a.m_ptr != b.m_ptr;
-			}			
-			
-			
-			private:
-
-				pointer m_ptr;			
-		};
-
-	    const const_Iterator begin() { return const_Iterator(&m_data[0]); }
-    	const const_Iterator end() { return const_Iterator(&m_data[200]); } 	
-		
-};
+#include <vector>
+#include <map>
+#include <type_traits>
+#include "containers/map.hpp"
+#include <list>
 
 int main() {
-	
-	Integers integers;
-	
-	for (auto i : integers)
-	    std::cout << i << "\n";
-
-	*integers.begin() = 8;
-	*integers.begin() = 867;
 
 	
-	return 0;
+	ft::map< int, int> tree;
+	std::map<int, int> og;
+
+	// tree.get_test();
+
+	std::cout << "TEST" << std::endl;
+	tree.insert_node(ft::pair< int, int>(0, 42));
+	tree.insert_node(ft::pair< int, int>(1, 44));
+	tree.insert_node(ft::pair< int, int>(2, 47));
+	tree.insert_node(ft::pair< int, int>(3, 47));
+	tree.insert_node(ft::pair< int, int>(4, 47));
+	tree.insert_node(ft::pair< int, int>(5, 47));
+	tree.insert_node(ft::pair< int, int>(6, 47));
+	tree.insert_node(ft::pair< int, int>(7, 47));
+	tree.insert_node(ft::pair< int, int>(8, 47));
+	tree.insert_node(ft::pair< int, int>(9, 47));
+	tree.insert_node(ft::pair< int, int>(10, 47));
+	std::cout << "size = " << tree.size() << std::endl;
+	tree.printTree();
+
+	ft::map<int, int>::iterator tree_b = tree.begin();
+	
+	// tree_b++;
+	// tree_b--;
+	// std::cout << tree_b << std::endl;
+
+
 }
