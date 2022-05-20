@@ -18,6 +18,7 @@
 #include <map>
 #include <type_traits>
 #include "containers/map.hpp"
+
 #include <list>
 
 int main() {
@@ -45,9 +46,9 @@ int main() {
 
 	ft::map<int, int>::iterator tree_b = tree.begin();
 	
-	// tree_b++;
+	tree_b++;
 	// tree_b--;
-	// std::cout << tree_b << std::endl;
+	std::cout << tree_b->first << " - " << tree_b->second << std::endl;
 
 
 }

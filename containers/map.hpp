@@ -8,8 +8,8 @@
 #include <cstdlib>
 #include <cstddef>
 #include "../iterators/utils.hpp"
-// #include "../iterators/iterator_map.hpp"
-#include "../iterators/rbt_iterator.hpp"
+#include "../iterators/iterator_map.hpp"
+// #include "../iterators/rbt_iterator.hpp"
 #define BLACK 0 
 #define RED 1
 
@@ -42,7 +42,7 @@ namespace ft {
 			typedef Node<value_type>								Node;
 			typedef Node*											NodePtr;
     		
-			typedef ft::rbt_iterator<key_type, mapped_type>       	iterator;
+			typedef ft::map_iterator<key_type, mapped_type>       	iterator;
     		// typedef ft::map_iterator<key_type, mapped_type, true> 	const_iterator;
     		// typedef ft::reverse_iterator<iterator>                	reverse_iterator;
     		// typedef ft::reverse_iterator<const_iterator>          	const_reverse_iterator;
@@ -118,10 +118,10 @@ namespace ft {
 		/*                                 Iterator:                                  */
 		/* ************************************************************************** */
 
-			iterator begin() { return iterator(root->left); };
+			iterator begin() { return iterator(minimum(root)); };
 			// const_iterator begin() const;
 			
-			iterator end() { return iterator(root); };
+			// iterator end() { return iterator(root); };
 			// const_iterator end() const;
 			
 			//reverse_iterator rbegin();
@@ -164,6 +164,7 @@ namespace ft {
 				return ft::make_pair(iterator(insert_node(val)), true);
 
 			};
+
 			// with hint (2)	
 			// iterator insert (iterator position, const value_type& val);
 			// range (3)	
@@ -339,6 +340,36 @@ namespace ft {
 				root->color = BLACK;
 			};
 
+					/*
+						ajout de type dans le node :
+							0 : normal
+							1 : passed the begin
+							2 : passed the end
+
+
+						A la construction de l arbre :
+							insert(new(node(type = 1)))
+							insert(new(node(type = 2)))
+
+						surcharge :
+							operator<(node x, node y)
+							{
+								if (x.type == 1)
+									return (true)
+								if (x.type == 2)
+									return (false)
+								if (y.type == 2)
+									return (true)
+								if (y.type == 1)
+									return (false)
+								if (x->pair.first < y->pair.first) // x et y sont de type 0
+									return (true)
+							}
+						remplacement dans le code :
+						 	node->pair.first < x->pair.first ====> if (node < x)  :: a remplacer dans TOUT le code de l'arbre
+
+					*/
+
 			NodePtr insert_node(const value_type& val) {
 				
 				NodePtr node = alloc_node.allocate(1);
@@ -393,6 +424,14 @@ namespace ft {
 				return found;
     		};
 
+			NodePtr minimum(NodePtr node) {
+    			
+				while (node->left != TNULL)
+				{
+    			  node = node->left;
+    			}
+    			return node;
+  			}
 		/* ************************************************************************** */
 		/*                              Print Helper:                                 */
 		/* ************************************************************************** */

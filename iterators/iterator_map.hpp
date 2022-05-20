@@ -13,110 +13,89 @@
 namespace ft {
 
 
-	// template <typename T>
-	// struct Node {
+	template <typename T>
+	struct Node {
 
-	// 	T pair;
-	// 	Node *left;
-	// 	Node *right;
-	// 	Node *parent;
-	// 	int color;
-	// };
+		T pair;
+		Node *left;
+		Node *right;
+		Node *parent;
+		int color;
+	};
 
 	template<class key, class T>
 	class map_iterator {
 
 		public:
-			
+		
+		/* ************************************************************************** */
+		/*                          Member type Definition                            */
+		/* ************************************************************************** */			
+		
 			typedef map_iterator<key, T> 	Self;
     		typedef ft::pair<key, T>		value_type;
 			typedef value_type&				reference;
 			typedef value_type*				pointer;
 			typedef Node<value_type>		Node;
+			typedef Node*					NodePtr;
+		
+		/* ************************************************************************** */
+		/*                                Atribues                                    */
+		/* ************************************************************************** */
 
+			NodePtr _pNode;
 
+		/* ************************************************************************** */
+		/*                               Constructor:                                 */
+		/* ************************************************************************** */
+		
 			map_iterator() : _pNode(NULL) {};
 		
-			map_iterator(Node* n=nullptr) :_pNode(n) { };
+			map_iterator(Node* n) :_pNode(n) { };
 
 			map_iterator(const map_iterator<key, T> &copy) : _pNode(copy._pNode) {};
 		
-			 Self   &operator = (const Self &rhs) {
+			virtual ~map_iterator() {};
+			
+			Self   &operator = (const Self &rhs) {
+				
 				if (&rhs != this)
 					_pNode = rhs._pNode;
 				return *this;
-				};
+			};
 
-			virtual ~map_iterator() {};
+		/* ************************************************************************** */
+		/*                                  operator:                                 */
+		/* ************************************************************************** */
 
-			reference operator*() const { return _pNode->_pair; }
+			reference operator*() const { return _pNode->pair; }
 			
-			pointer operator->() const { return &_pNode->_pair; }
+			pointer operator->() const { return &_pNode->pair; }
 
 			Self& operator++() {
 
-				if (_pNode->right)
-				{
-					Node* temp = _pNode->right;
-					while (temp->left) {
-						temp = temp->left;
-					}
-					_pNode = temp;
-				}
-				else
-				{
-					Node* tmp = _pNode->parent;
-					if (tmp->right==_pNode) {
-						while (_pNode==tmp->right)
-						{
-							_pNode = tmp;
-							tmp = tmp->parent;
-						}
-					}
-					if (_pNode->right != tmp)
-						_pNode = tmp;
-				}
+				_pNode = successor(_pNode);
 				return *this;
 			}
 			
 			Self operator++(int) {
 
-				Self tmp = *this;
-				if (_pNode->right)
-				{
-					Node* temp = _pNode->right;
-					while (temp->left) {
-						temp = temp->left;
-					}
-					_pNode = temp;
-				}
-				else
-				{
-					Node* tmp = _pNode->parent;
-					if (tmp->right==_pNode) {
-						while (_pNode==tmp->right)
-						{
-							_pNode = tmp;
-							tmp = tmp->parent;
-						}
-					}
-					if (_pNode->right != tmp)
-						_pNode = tmp;
-				}
-				return tmp;
+				map_iterator res(*this);
+				++(*this);
+				return res;
 			}
 			
 			Self& operator--() {
 
-				Decrement();
+				_pNode = predecessor(_pNode);
 				return *this;
 			}
 			
 			Self operator--(int) {
 
-				Self tmp = *this;
-				Decrement();
-				return tmp;
+				map_iterator res(*this);
+				--(*this);
+				return res;
 			}
 			
 			bool operator==(const Self& s) {
@@ -128,68 +107,53 @@ namespace ft {
 				
 				return _pNode != s._pNode;
 			}
-
 		
-			// void Increment() {
-				
-			// 	if (_pNode->right)
-			// 	{
-			// 		Node* temp = _pNode->right;
-			// 		while (temp->left) {
-			// 			temp = temp->left;
-			// 		}
-			// 		_pNode = temp;
-			// 	}
-			// 	else
-			// 	{
-			// 		Node* tmp = _pNode->parent;
-			// 		if (tmp->right==_pNode) {
-			// 			while (_pNode==tmp->right)
-			// 			{
-			// 				_pNode = tmp;
-			// 				tmp = tmp->parent;
-			// 			}
-			// 		}
-			// 		if (_pNode->right != tmp)
-			// 			_pNode = tmp;
-			// 	}
-			// }
-			
-			void Decrement() {
-				
-				if (_pNode->parent->parent == _pNode && _pNode->color== RED )
-					_pNode = _pNode->left;
+		/* ************************************************************************** */
+		/*                                  operator:                                 */
+		/* ************************************************************************** */
 
-				else if (_pNode->left) 
-				{
-					while (_pNode->right)
-					{
-						_pNode = _pNode->right;
-					}
-				}
-				else 
-				{
-					Node* parent = _pNode->parent;
-					while (parent->left == _pNode)
-					{
-						_pNode = parent;
-						parent = parent->parent;
-					}
-					_pNode = parent;
-				}
+			NodePtr minimum(NodePtr node) {
+				
+				while (node->left != NULL)
+					node = node->left;
+				return node;
 			}
 
+			NodePtr maximum(NodePtr node) {
+				
+				while (node->right != NULL)
+					node = node->right;
+				return node;
+			}
 
-			Node* _pNode;
+			NodePtr successor(NodePtr x) {
+				
+				if (x->right != NULL)
+					return minimum(x->right);
 
+				NodePtr y = x->parent;
+				while (y != NULL && x == y->right)
+				{
+					x = y;
+					y = y->parent;
+				}
+				return y;
+			}
 
+			NodePtr predecessor(NodePtr x) {
+				
+				if (x->left != NULL)
+					return maximum(x->left);
+
+				NodePtr y = x->parent;
+				while (y != NULL && x == y->left)
+				{
+					x = y;
+					y = y->parent;
+				}
+				return y;
+			}
 	};
-		template <class key, class T>
-		std::ostream &operator<<( std::ostream &o, map_iterator<key, T> const &rhs ) {
-
-			o << rhs._pNode;
-			return o;
-		};
 };
 
 #endif
