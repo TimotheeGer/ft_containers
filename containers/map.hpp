@@ -42,8 +42,8 @@ namespace ft {
 			typedef Node<value_type>								Node;
 			typedef Node*											NodePtr;
     		
-			typedef ft::map_iterator<key_type, mapped_type>       	iterator;
-    		// typedef ft::map_iterator<key_type, mapped_type, true> 	const_iterator;
+			typedef ft::map_iterator<key_type, mapped_type, false>	iterator;
+    		// typedef ft::map_iterator<key_type, mapped_type, true>	const_iterator;
     		// typedef ft::reverse_iterator<iterator>                	reverse_iterator;
     		// typedef ft::reverse_iterator<const_iterator>          	const_reverse_iterator;
 
@@ -118,10 +118,10 @@ namespace ft {
 		/*                                 Iterator:                                  */
 		/* ************************************************************************** */
 
-			iterator begin() { return iterator(minimum(root)); };
-			// const_iterator begin() const;
+			iterator begin()				{ return iterator(minimum(root), TNULL, root); };
+			// const_iterator begin() const	{ return iterator(minimum(root), TNULL); };
 			
-			// iterator end() { return iterator(root); };
+			iterator end() 					{ return iterator(TNULL, TNULL, root); };
 			// const_iterator end() const;
 			
 			//reverse_iterator rbegin();
@@ -136,11 +136,11 @@ namespace ft {
 		/* ************************************************************************** */
 
 
-			// bool empty() const;
-			size_type size() const { return _size; };
+			bool 		empty() const { return (size() == 0); };
 
+			size_type	size() const { return _size; };
 
-			// size_type max_size() const;
+			size_type max_size() const { return _alloc.max_size(); };
 
 		/* ************************************************************************** */
 		/*                            	 Element Access:                              */
@@ -156,12 +156,13 @@ namespace ft {
 			// single element (1)	
 			pair<iterator,bool> insert (const value_type& val) {
 
-				NodePtr exist = key_exists_recurse(get_root(), val.first);
+				NodePtr exist = searchTreeHelper(root, val);
 
-				if (exist)
-					return ft::make_pair(iterator(exist), false);
-				_size++;
-				return ft::make_pair(iterator(insert_node(val)), true);
+				if (exist == TNULL)
+				{
+					return ft::make_pair<iterator, bool>(iterator(insert_node(val), TNULL, root), true);
+				}
+				return ft::make_pair<iterator, bool>(iterator(exist, TNULL, root), false);
 
 			};
 
@@ -405,24 +406,11 @@ namespace ft {
 				if (node->parent == nullptr) { node->color = 0; return node; }
 
 				if (node->parent->parent == nullptr) { return node; }
-    			insertFix(node);
+    			
+				insertFix(node);
 				
 				return node;
 			};
-
-			NodePtr key_exists_recurse(NodePtr root, key_type key) const {
-      			
-				NodePtr found = get_root();
-
-				if (!root)
-					return NULL;
-				found = key_exists_recurse(root->left, key);
-				if (!_comp(root->pair.first, key) && !_comp(key, root->pair.first))
-					found = root;
-				if (!found)
-					found = key_exists_recurse(root->right, key);
-				return found;
-    		};
 
 			NodePtr minimum(NodePtr node) {
     			
@@ -432,6 +420,25 @@ namespace ft {
     			}
     			return node;
   			}
+
+			NodePtr maximum(NodePtr node) {
+   				
+				while (node->right != TNULL)
+				{
+      				node = node->right;
+    			}
+    			return node;
+  			}
+
+  			NodePtr searchTreeHelper(NodePtr node, const value_type& key) {
+    
+				if (node == TNULL || key.first == node->pair.first)
+      				return node;
+    			if (key.first < node->pair.first)
+    				return searchTreeHelper(node->left, key);
+    			return searchTreeHelper(node->right, key);
+  			}
+
 		/* ************************************************************************** */
 		/*                              Print Helper:                                 */
 		/* ************************************************************************** */

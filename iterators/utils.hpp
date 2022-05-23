@@ -45,7 +45,6 @@ namespace ft {
 		/*                       Non-member function overloads                        */
 		/* ************************************************************************** */
 
-			
 			friend  bool operator== (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return lhs.first==rhs.first && lhs.second==rhs.second; };
 
 			
@@ -62,7 +61,6 @@ namespace ft {
 		
 			
 			friend bool operator>= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return !(lhs<rhs); };
-
 
 	};
 

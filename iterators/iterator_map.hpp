@@ -12,7 +12,6 @@
 
 namespace ft {
 
-
 	template <typename T>
 	struct Node {
 
@@ -20,10 +19,27 @@ namespace ft {
 		Node *left;
 		Node *right;
 		Node *parent;
+		Node *tNULL;
 		int color;
 	};
 
-	template<class key, class T>
+	template<bool _const, typename type_const, typename type_normal>
+	struct check_const;
+
+	template<typename type_const, typename type_normal>
+	struct check_const<true, type_const, type_normal> {
+
+		typedef type_const type;
+	};
+
+
+	template<typename type_const, typename type_normal>
+	struct check_const<false, type_const, type_normal> {
+
+		typedef type_normal type;
+	};
+
+	template<class key, class T, bool _const = false>
 	class map_iterator {
 
 		public:
@@ -32,28 +48,30 @@ namespace ft {
 		/*                          Member type Definition                            */
 		/* ************************************************************************** */			
 		
-			typedef map_iterator<key, T> 	Self;
-    		typedef ft::pair<key, T>		value_type;
-			typedef value_type&				reference;
-			typedef value_type*				pointer;
-			typedef Node<value_type>		Node;
-			typedef Node*					NodePtr;
+			typedef map_iterator<key, T> 												Self;
+    		typedef ft::pair<key, T>													value_type;
+			typedef typename check_const<_const, const value_type&, value_type&>::type	reference;
+			typedef typename check_const<_const, const value_type*, value_type*>::type	pointer;
+			typedef Node<value_type>													Node;
+			typedef Node*																NodePtr;
 		
 		/* ************************************************************************** */
 		/*                                Atribues                                    */
 		/* ************************************************************************** */
 
-			NodePtr _pNode;
+			NodePtr	_pNode;
+			NodePtr _root;
+			NodePtr	tNULL;
 
 		/* ************************************************************************** */
 		/*                               Constructor:                                 */
 		/* ************************************************************************** */
 		
-			map_iterator() : _pNode(NULL) {};
+			map_iterator() : _pNode(NULL), tNULL(NULL), _root(NULL) {};
 		
-			map_iterator(Node* n) :_pNode(n) { };
+			map_iterator(NodePtr n, NodePtr TNULL, NodePtr root) :_pNode(n) , tNULL(TNULL), _root(root) { };
 
-			map_iterator(const map_iterator<key, T> &copy) : _pNode(copy._pNode) {};
+			map_iterator(const map_iterator<key, T, false> &copy) : _pNode(copy._pNode) {};
 		
 			virtual ~map_iterator() {};
 			
@@ -74,27 +92,39 @@ namespace ft {
 
 			Self& operator++() {
 
-				_pNode = successor(_pNode);
+				if (_pNode == maximum(_root))
+					_pNode = tNULL;
+				else
+					_pNode = successor(_pNode);
 				return *this;
 			}
 			
 			Self operator++(int) {
 
 				map_iterator res(*this);
-				++(*this);
+				if (_pNode == maximum(_root))
+					_pNode = tNULL;
+				else
+					_pNode = successor(_pNode);
 				return res;
 			}
 			
 			Self& operator--() {
 
-				_pNode = predecessor(_pNode);
+				if (_pNode == tNULL)
+					_pNode = maximum(_root);
+				else
+					_pNode = predecessor(_pNode);
 				return *this;
 			}
 			
 			Self operator--(int) {
 
 				map_iterator res(*this);
-				--(*this);
+				if (_pNode == tNULL)
+					_pNode = maximum(_root);
+				else
+					_pNode = predecessor(_pNode);
 				return res;
 			}
 			
@@ -109,30 +139,30 @@ namespace ft {
 			}
 		
 		/* ************************************************************************** */
-		/*                                  operator:                                 */
+		/*                                    utils:                                  */
 		/* ************************************************************************** */
 
 			NodePtr minimum(NodePtr node) {
 				
-				while (node->left != NULL)
+				while (node->left != tNULL)
 					node = node->left;
 				return node;
 			}
 
 			NodePtr maximum(NodePtr node) {
 				
-				while (node->right != NULL)
+				while (node->right != tNULL)
 					node = node->right;
 				return node;
 			}
 
 			NodePtr successor(NodePtr x) {
 				
-				if (x->right != NULL)
+				if (x->right != tNULL)
 					return minimum(x->right);
 
 				NodePtr y = x->parent;
-				while (y != NULL && x == y->right)
+				while (y != tNULL && x == y->right)
 				{
 					x = y;
 					y = y->parent;
@@ -141,12 +171,12 @@ namespace ft {
 			}
 
 			NodePtr predecessor(NodePtr x) {
-				
-				if (x->left != NULL)
+
+				if (x->left != tNULL)
 					return maximum(x->left);
 
 				NodePtr y = x->parent;
-				while (y != NULL && x == y->left)
+				while (y != tNULL && x == y->left)
 				{
 					x = y;
 					y = y->parent;
