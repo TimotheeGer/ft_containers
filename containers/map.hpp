@@ -156,7 +156,7 @@ namespace ft {
 			// single element (1)	
 			pair<iterator,bool> insert (const value_type& val) {
 
-				NodePtr exist = searchTreeHelper(root, val);
+				NodePtr exist = searchTree(root, val);
 
 				if (exist == TNULL)
 				{
@@ -167,14 +167,29 @@ namespace ft {
 			};
 
 			// with hint (2)	
-			// iterator insert (iterator position, const value_type& val);
+			iterator insert (iterator position, const value_type& val) {
+
+				(void)position;
+				return (insert(val).first);
+			};
+
 			// range (3)	
-			// template <class InputIterator>
-			//   void insert (InputIterator first, InputIterator last);
+			template <class InputIterator>
+			  void insert (InputIterator first, InputIterator last) {
+
+				  while (first != last)
+				  {
+					  insert(*first);
+					  ++first;
+				  }
+			  };
 
 
 			// (1)	
-			//      void erase (iterator position);
+			void erase (iterator position) {
+
+				delete_n(*position);
+			};
 			// (2)	
 			// 		size_type erase (const key_type& k);
 			// (3)	
@@ -231,6 +246,10 @@ namespace ft {
 		
 		/* ************************************************************************** */
 		/*                           		  Utils:                                  */
+		/* ************************************************************************** */
+		
+		/* ************************************************************************** */
+		/*                           		 insert:                                  */
 		/* ************************************************************************** */
 
 			void leftRotate(NodePtr x) {
@@ -341,36 +360,6 @@ namespace ft {
 				root->color = BLACK;
 			};
 
-					/*
-						ajout de type dans le node :
-							0 : normal
-							1 : passed the begin
-							2 : passed the end
-
-
-						A la construction de l arbre :
-							insert(new(node(type = 1)))
-							insert(new(node(type = 2)))
-
-						surcharge :
-							operator<(node x, node y)
-							{
-								if (x.type == 1)
-									return (true)
-								if (x.type == 2)
-									return (false)
-								if (y.type == 2)
-									return (true)
-								if (y.type == 1)
-									return (false)
-								if (x->pair.first < y->pair.first) // x et y sont de type 0
-									return (true)
-							}
-						remplacement dans le code :
-						 	node->pair.first < x->pair.first ====> if (node < x)  :: a remplacer dans TOUT le code de l'arbre
-
-					*/
-
 			NodePtr insert_node(const value_type& val) {
 				
 				NodePtr node = alloc_node.allocate(1);
@@ -411,7 +400,154 @@ namespace ft {
 				
 				return node;
 			};
+		/* ************************************************************************** */
+		/*                           		 delete:                                  */
+		/* ************************************************************************** */
+ 
+		void deleteFix(NodePtr x) {
+			
+			NodePtr s = TNULL;
+			while (x != root && x->color == BLACK)
+			{
+				if (x == x->parent->left)
+				{
+					s = x->parent->right;
+					if (s->color == BLACK)
+					{
+						s->color = BLACK;
+						x->parent->color = RED;
+						leftRotate(x->parent);
+						s = x->parent->right;
+					}
+					if (s->left->color == BLACK && s->right->color == BLACK)
+					{
+						s->color = RED;
+						x = x->parent;
+					} 
+					else
+					{
+						if (s->right->color == BLACK)
+						{
+							s->left->color = BLACK;
+							s->color = RED;
+							rightRotate(s);
+							s = x->parent->right;
+						}
+						s->color = x->parent->color;
+						x->parent->color = BLACK;
+						s->right->color = BLACK;
+						leftRotate(x->parent);
+						x = root;
+					}
+				} 
+				else
+				{
+					s = x->parent->left;
+					if (s->color == BLACK)
+					{
+						s->color = BLACK;
+						x->parent->color = RED;
+						rightRotate(x->parent);
+						s = x->parent->left;
+					}
+					if (s->right->color == BLACK && s->right->color == BLACK)
+					{
+						s->color = RED;
+						x = x->parent;
+					} 
+					else 
+					{
+						if (s->left->color == BLACK)
+						{
+							s->right->color = BLACK;
+							s->color = RED;
+							leftRotate(s);
+							s = x->parent->left;
+						}
+						s->color = x->parent->color;
+						x->parent->color = BLACK;
+						s->left->color = BLACK;
+						rightRotate(x->parent);
+						x = root;
+					}
+				}
+			}
+			x->color = BLACK;
+		}
 
+		void rbTransplant(NodePtr u, NodePtr v) {
+
+			if (u->parent == TNULL)
+				root = v;
+			else if (u == u->parent->left)
+				u->parent->left = v;
+			else
+				u->parent->right = v;
+			v->parent = u->parent;
+		}
+
+		void deleteNode(NodePtr node) {
+			
+			
+			NodePtr y = node;
+			NodePtr x = TNULL;
+			int y_original_color = y->color;
+			if (node->left == TNULL)
+			{
+				x = node->right;
+				rbTransplant(node, node->right);
+			}
+			else if (node->right == TNULL)
+			{
+				x = node->left;
+				rbTransplant(node, node->left);
+			}
+			else
+			{
+				y = minimum(node->right);
+				y_original_color = y->color;
+				// x = y->right;
+				if (y->parent == node)
+					x->parent = y;
+				else
+				{
+					rbTransplant(y, y->right);
+					y->right = node->right;
+					y->right->parent = y;
+				}
+				rbTransplant(node, y);
+				y->left = node->left;
+				y->left->parent = y;
+				y->color = node->color;
+			}
+			// delete z;
+			
+			
+			if (y_original_color == BLACK)
+				deleteFix(x);
+		}
+
+		void	deallocate_node(NodePtr node)
+		{
+			_alloc.destroy(&node->pair);
+			alloc_node.deallocate(node, 1);
+		}
+
+		void	delete_n(value_type k)
+		{
+			NodePtr n = searchTree(root,k);
+			if (n != TNULL)
+			{
+				deleteNode(n);
+				deallocate_node(n);
+				_size--;
+			}
+		}
+
+		/* ************************************************************************** */
+		/*                           		 Min/Max:                                 */
+		/* ************************************************************************** */
+		
 			NodePtr minimum(NodePtr node) {
     			
 				while (node->left != TNULL)
@@ -429,14 +565,18 @@ namespace ft {
     			}
     			return node;
   			}
-
-  			NodePtr searchTreeHelper(NodePtr node, const value_type& key) {
+		
+		/* ************************************************************************** */
+		/*                           		 search:                                  */
+		/* ************************************************************************** */
+  		
+		  	NodePtr searchTree(NodePtr node, const value_type& key) {
     
 				if (node == TNULL || key.first == node->pair.first)
       				return node;
     			if (key.first < node->pair.first)
-    				return searchTreeHelper(node->left, key);
-    			return searchTreeHelper(node->right, key);
+    				return searchTree(node->left, key);
+    			return searchTree(node->right, key);
   			}
 
 		/* ************************************************************************** */

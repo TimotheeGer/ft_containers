@@ -45,6 +45,9 @@ int main() {
 	tree.printTree();
 
 	ft::map<int, int>::iterator tree_b = tree.begin();
+	tree_b++;
+	tree_b++;
+	tree_b++;
 	std::cout << "begin = " << tree_b->first << " - " << tree_b->second << std::endl;
 
 	ft::map<int, int>::iterator tree_e = tree.end();
@@ -52,13 +55,18 @@ int main() {
 	// // tree_e--;
 	// std::cout << "end = " << tree_e->first << " - " << tree_e->second << std::endl;
 
-	while (tree_b != tree_e)
-	{
-		std::cout << tree_b->first << " - " << tree_b->second << std::endl;
-		tree_b++;
-	}
+	// while (tree_b != tree_e)
+	// {
+	// 	std::cout << tree_b->first << " - " << tree_b->second << std::endl;
+	// 	tree_b++;
+	// }
 		// std::cout << tree_b->first << " - " << tree_b->second << std::endl;
 		// tree_b++;
+
+	tree.erase(tree_b);
+	std::cout << "TEST ERASE " << std::endl;
+
+	tree.printTree();
 
 	std::cout << "TEST00" << std::endl;
 	// tree_b--;
