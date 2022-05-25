@@ -83,7 +83,9 @@ namespace ft {
 				TNULL->right = nullptr;
 				TNULL->parent = TNULL;
 				root = TNULL;
-
+				std::cout << "----------------------------RedBlackTree constructor------------------------------------" << std::endl;
+				std::cout << "init TNULL = " << TNULL << std::endl << std::flush;
+				std::cout << "----------------------------/RedBlackTree constructor------------------------------------" << std::endl;
 				_alloc.construct(&root->pair, value_type());
 			
 			}
@@ -156,7 +158,7 @@ namespace ft {
 			// single element (1)	
 			pair<iterator,bool> insert (const value_type& val) {
 
-				NodePtr exist = searchTree(root, val);
+				NodePtr exist = searchTreeKey(root, val.first);
 
 				if (exist == TNULL)
 				{
@@ -188,16 +190,57 @@ namespace ft {
 			// (1)	
 			void erase (iterator position) {
 
-				delete_n(*position);
+				// std::cout << "ERASE IT" << std::endl << std::flush;
+				deleteNodeHelper(root, position->first);
+				// std::cout << "ERASE IT FIN" << std::endl << std::flush;
 			};
+			
 			// (2)	
-			// 		size_type erase (const key_type& k);
+			size_type erase (const key_type& k) {
+				std::cout << "----------------------------MAP------------------------------------" << std::endl;
+				std::cout << "ROOT de map = " << get_root() << std::endl;
+				std::cout << "ERASE KEY = " << k << " max = " << get_max() << std::endl;
+				
+				NodePtr exist = searchTreeKey(root, k);
+
+				std::cout << "----------------------------/MAP------------------------------------" << std::endl;
+				if (exist != TNULL)
+				{
+					deleteNodeHelper(root, k);
+					return 1;
+				}
+				return 0;
+			};
+			
 			// (3)	
-			//      void erase (iterator first, iterator last);
+			void erase (iterator first, iterator last) {
+
+				// std::cout << "ROOT = " << root << std::endl << std::flush;
+				// std::cout << "TEST ERASE IT" << std::endl;
+				std::cout << "MAX ERASE = " << get_max() << std::endl << std::flush;
+				std::cout << "first = " << first->first << std::endl << std::flush;
+				std::cout << "last = " << last->first << std::endl << std::flush;
+				iterator	tmp;
+
+				// tmp = ++first;
+				while (first != last)
+				{
+					std::cout << "PRINT TREE" << std::endl;
+					// printTree();
+					std::cout << "FIRST = " << first->first << std::endl;
+					tmp = first;
+					first++;
+					erase(tmp);
+					std::cout << "-------------------------------------------------" << std::endl;
+				}
+			};
 
 			// void swap (map& x);
 
-			// void clear();
+			// void clear() {
+
+			// 	erase(begin(), tmp);
+			// };
 
 		/* ************************************************************************** */
 		/*                             		Observers:                                */
@@ -232,7 +275,7 @@ namespace ft {
 
 
 
-			NodePtr get_root() const { return root->parent; };
+			NodePtr get_root() const { return root; };
 			// Tree get_left() const { return root->left; };
 			// Tree get_right() const { return root->right; };
 
@@ -242,7 +285,10 @@ namespace ft {
 		/* ************************************************************************** */
 
 
-			// allocator_type get_allocator() const;
+			allocator_type get_allocator() const {
+
+				return allocator_type();
+			};
 		
 		/* ************************************************************************** */
 		/*                           		  Utils:                                  */
@@ -404,144 +450,171 @@ namespace ft {
 		/*                           		 delete:                                  */
 		/* ************************************************************************** */
  
-		void deleteFix(NodePtr x) {
-			
-			NodePtr s = TNULL;
-			while (x != root && x->color == BLACK)
-			{
-				if (x == x->parent->left)
+			void deleteFix(NodePtr x) {
+				
+				NodePtr s;
+				while (x != root && x->color == 0)
 				{
-					s = x->parent->right;
-					if (s->color == BLACK)
+					if (x == x->parent->left)
 					{
-						s->color = BLACK;
-						x->parent->color = RED;
-						leftRotate(x->parent);
 						s = x->parent->right;
-					}
-					if (s->left->color == BLACK && s->right->color == BLACK)
-					{
-						s->color = RED;
-						x = x->parent;
-					} 
-					else
-					{
-						if (s->right->color == BLACK)
+						if (s->color == 1)
 						{
-							s->left->color = BLACK;
-							s->color = RED;
-							rightRotate(s);
+							s->color = 0;
+							x->parent->color = 1;
+							leftRotate(x->parent);
 							s = x->parent->right;
 						}
-						s->color = x->parent->color;
-						x->parent->color = BLACK;
-						s->right->color = BLACK;
-						leftRotate(x->parent);
-						x = root;
-					}
-				} 
-				else
-				{
-					s = x->parent->left;
-					if (s->color == BLACK)
-					{
-						s->color = BLACK;
-						x->parent->color = RED;
-						rightRotate(x->parent);
-						s = x->parent->left;
-					}
-					if (s->right->color == BLACK && s->right->color == BLACK)
-					{
-						s->color = RED;
-						x = x->parent;
+						if (s->left->color == 0 && s->right->color == 0)
+						{
+							s->color = 1;
+							x = x->parent;
+						} 
+						else
+						{
+							if (s->right->color == 0)
+							{
+								s->left->color = 0;
+								s->color = 1;
+								rightRotate(s);
+								s = x->parent->right;
+							}
+							s->color = x->parent->color;
+							x->parent->color = 0;
+							s->right->color = 0;
+							leftRotate(x->parent);
+							x = root;
+						}
 					} 
 					else 
 					{
-						if (s->left->color == BLACK)
+						s = x->parent->left;
+						if (s->color == 1)
 						{
-							s->right->color = BLACK;
-							s->color = RED;
-							leftRotate(s);
+							s->color = 0;
+							x->parent->color = 1;
+							rightRotate(x->parent);
 							s = x->parent->left;
 						}
-						s->color = x->parent->color;
-						x->parent->color = BLACK;
-						s->left->color = BLACK;
-						rightRotate(x->parent);
-						x = root;
+						if (s->right->color == 0 && s->right->color == 0)
+						{
+							s->color = 1;
+							x = x->parent;
+						}
+						else 
+						{
+							if (s->left->color == 0)
+							{
+								s->right->color = 0;
+								s->color = 1;
+								leftRotate(s);
+								s = x->parent->left;
+							}
+							s->color = x->parent->color;
+							x->parent->color = 0;
+							s->left->color = 0;
+							rightRotate(x->parent);
+							x = root;
+						}
 					}
 				}
+				x->color = 0;
 			}
-			x->color = BLACK;
-		}
 
-		void rbTransplant(NodePtr u, NodePtr v) {
-
-			if (u->parent == TNULL)
-				root = v;
-			else if (u == u->parent->left)
-				u->parent->left = v;
-			else
-				u->parent->right = v;
-			v->parent = u->parent;
-		}
-
-		void deleteNode(NodePtr node) {
-			
-			
-			NodePtr y = node;
-			NodePtr x = TNULL;
-			int y_original_color = y->color;
-			if (node->left == TNULL)
-			{
-				x = node->right;
-				rbTransplant(node, node->right);
-			}
-			else if (node->right == TNULL)
-			{
-				x = node->left;
-				rbTransplant(node, node->left);
-			}
-			else
-			{
-				y = minimum(node->right);
-				y_original_color = y->color;
-				// x = y->right;
-				if (y->parent == node)
-					x->parent = y;
+			void rbTransplant(NodePtr u, NodePtr v) {
+				
+				if (u->parent == nullptr)
+				{
+					root = v;
+				} 
+				else if (u == u->parent->left)
+				{
+					u->parent->left = v;
+				} 
 				else
 				{
-					rbTransplant(y, y->right);
-					y->right = node->right;
-					y->right->parent = y;
+					u->parent->right = v;
 				}
-				rbTransplant(node, y);
-				y->left = node->left;
-				y->left->parent = y;
-				y->color = node->color;
+				v->parent = u->parent;
 			}
-			// delete z;
-			
-			
-			if (y_original_color == BLACK)
-				deleteFix(x);
-		}
+
+			void deleteNodeHelper(NodePtr node, key_type key) {
+				
+				NodePtr z = TNULL;
+				NodePtr x, y;
+				while (node != TNULL)
+				{
+					if (node->pair.first == key)
+					{
+						z = node;
+					}
+					if (node->pair.first <= key)
+					{
+						node = node->right;
+					} 
+					else
+					{
+						node = node->left;
+					}
+				}
+				if (z == TNULL)
+				{
+					std::cout << "Key not found in the tree" << std::endl;
+					return;
+				}
+
+				y = z;
+				int y_original_color = y->color;
+				if (z->left == TNULL)
+				{
+					x = z->right;
+					rbTransplant(z, z->right);
+				} 
+				else if (z->right == TNULL)
+				{
+					x = z->left;
+					rbTransplant(z, z->left);
+				} 
+				else
+				{
+					y = minimum(z->right);
+					y_original_color = y->color;
+					x = y->right;
+					if (y->parent == z)
+					{
+						x->parent = y;
+					} 
+					else 
+					{
+						rbTransplant(y, y->right);
+						y->right = z->right;
+						y->right->parent = y;
+					}
+					rbTransplant(z, y);
+					y->left = z->left;
+					y->left->parent = y;
+					y->color = z->color;
+				}
+				
+				// delete z;
+				deallocate_node(z);
+				
+				if (y_original_color == 0)
+				{
+					deleteFix(x);
+				}
+			}
+
+		void deleteNode(value_type data) {
+    		
+			deleteNodeHelper(root, data);
+			_size--;
+  		}
 
 		void	deallocate_node(NodePtr node)
 		{
 			_alloc.destroy(&node->pair);
 			alloc_node.deallocate(node, 1);
-		}
-
-		void	delete_n(value_type k)
-		{
-			NodePtr n = searchTree(root,k);
-			if (n != TNULL)
-			{
-				deleteNode(n);
-				deallocate_node(n);
-				_size--;
-			}
 		}
 
 		/* ************************************************************************** */
@@ -565,18 +638,32 @@ namespace ft {
     			}
     			return node;
   			}
+
+			int get_max() {
+
+				return (maximum(root)->pair.first);
+			}
 		
 		/* ************************************************************************** */
 		/*                           		 search:                                  */
 		/* ************************************************************************** */
   		
-		  	NodePtr searchTree(NodePtr node, const value_type& key) {
+		  	// NodePtr searchTree(NodePtr node, const value_type& key) {
     
-				if (node == TNULL || key.first == node->pair.first)
+			// 	if (node == TNULL || key.first == node->pair.first)
+      		// 		return node;
+    		// 	if (key.first < node->pair.first)
+    		// 		return searchTree(node->left, key);
+    		// 	return searchTree(node->right, key);
+  			// }
+
+			NodePtr searchTreeKey(NodePtr node, const key_type& key) {
+    
+				if (node == TNULL || key == node->pair.first)
       				return node;
-    			if (key.first < node->pair.first)
-    				return searchTree(node->left, key);
-    			return searchTree(node->right, key);
+    			if (key < node->pair.first)
+    				return searchTreeKey(node->left, key);
+    			return searchTreeKey(node->right, key);
   			}
 
 		/* ************************************************************************** */

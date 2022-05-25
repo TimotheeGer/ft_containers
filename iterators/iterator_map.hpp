@@ -71,14 +71,18 @@ namespace ft {
 		
 			map_iterator(NodePtr n, NodePtr TNULL, NodePtr root) :_pNode(n) , tNULL(TNULL), _root(root) { };
 
-			map_iterator(const map_iterator<key, T, false> &copy) : _pNode(copy._pNode) {};
+			map_iterator(const map_iterator<key, T, false> &copy) : _pNode(copy._pNode), tNULL(copy.tNULL), _root(copy._root) {};
 		
 			virtual ~map_iterator() {};
 			
 			Self   &operator = (const Self &rhs) {
 				
 				if (&rhs != this)
+				{
 					_pNode = rhs._pNode;
+					tNULL = rhs.tNULL;
+					_root = rhs._root;
+				}
 				return *this;
 			};
 
@@ -93,19 +97,35 @@ namespace ft {
 			Self& operator++() {
 
 				if (_pNode == maximum(_root))
+				{
 					_pNode = tNULL;
+				}
 				else
+				{
 					_pNode = successor(_pNode);
+				}
 				return *this;
 			}
 			
 			Self operator++(int) {
-
+				std::cout << "----------------------------ITERATOR------------------------------------" << std::endl;
+				std::cout << "PNODE = " << _pNode->pair.first << std::endl << std::flush;
+				std::cout << "OP++ root = " << _root << std::endl << std::flush;
+				std::cout << "MAXIMUM = " << maximum(_root)->pair.first << std::endl;
+				std::cout << "MINIMUM = " << minimum(_root)->pair.first << std::endl;
 				map_iterator res(*this);
+
 				if (_pNode == maximum(_root))
+				{
+					std::cout << "OP++1" << std::endl << std::flush;
 					_pNode = tNULL;
+				}
 				else
+				{
+					std::cout << "OP++2" << std::endl << std::flush;
 					_pNode = successor(_pNode);
+				}
+				std::cout << "----------------------------/ITERATOR------------------------------------" << std::endl;
 				return res;
 			}
 			
@@ -144,13 +164,17 @@ namespace ft {
 
 			NodePtr minimum(NodePtr node) {
 				
-				while (node->left != tNULL)
+				std::cout << "NODE MIN = " << node->pair.first << std::endl;
+				while (node->left != tNULL){
+				std::cout << "YOOOOOOOOOO" << std::endl << std::flush;
+
 					node = node->left;
+				}
 				return node;
 			}
 
 			NodePtr maximum(NodePtr node) {
-				
+
 				while (node->right != tNULL)
 					node = node->right;
 				return node;
@@ -182,6 +206,11 @@ namespace ft {
 					y = y->parent;
 				}
 				return y;
+			}
+
+			NodePtr get_adrs() {
+
+				return (_pNode);
 			}
 	};
 };
