@@ -16,7 +16,7 @@
 
 namespace ft {
 
-	template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<Key,T>> >
+	template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<Key, T>> >
 	class map {
 
 		/* ************************************************************************** */
@@ -319,15 +319,15 @@ namespace ft {
 					return (end()); 
 			};
 
-			// const_iterator find (const key_type& k) const {
+			const_iterator find (const key_type& k) const {
 				
-			// 	NodePtr tmp = searchTreeKey(root, k);
+				NodePtr tmp = searchTreeKey(root, k);
 				
-			// 	if (tmp != TNULL)
-			// 		return (iterator(tmp));
-			// 	else
-			// 		return (end());
-			// };
+				if (tmp != TNULL)
+					return (iterator(tmp));
+				else
+					return (end());
+			};
 
 			size_type count (const key_type& k) const {
 
@@ -342,14 +342,26 @@ namespace ft {
 
 				while (itb != ite)
 				{
-					if (key_compare((*itb).first, k) == false)
+					if (_comp((*itb).first, k) == false)
 						break;
 					itb++;
 				}
 				return (itb);
 			};
 
-			// const_iterator lower_bound (const key_type& k) const;
+			const_iterator lower_bound (const key_type& k) const {
+
+				const_iterator itb = begin();
+				const_iterator ite = end();
+
+				while (itb != ite)
+				{
+					if (_comp((*itb).first, k) == false)
+						break;
+					itb++;
+				}
+				return (itb);				
+			};
 
 			iterator upper_bound (const key_type& k) {
 
@@ -358,18 +370,30 @@ namespace ft {
 
 				while (itb != ite)
 				{
-					if (key_compare(k, (*itb).first))
+					if (_comp(k, (*itb).first))
 						break;
 					itb++;
 				}
 				return (itb);
 			};
-			// const_iterator upper_bound (const key_type& k) const;
+			const_iterator upper_bound (const key_type& k) const {
 
-			// pair<const_iterator,const_iterator> equal_range (const key_type& k) const {
+				const_iterator itb = begin();
+				const_iterator ite = end();
 
-			// 	return (ft::make_pair(lower_bound(k), upper_bound(k)));
-			// };
+				while (itb != ite)
+				{
+					if (_comp(k, (*itb).first))
+						break;
+					itb++;
+				}
+				return (itb);
+			};
+
+			pair<const_iterator,const_iterator> equal_range (const key_type& k) const {
+
+				return (ft::make_pair(lower_bound(k), upper_bound(k)));
+			};
 
 			pair<iterator,iterator>             equal_range (const key_type& k) {
 
@@ -412,22 +436,14 @@ namespace ft {
 				NodePtr y = x->right;
 				x->right = y->left;
 				if (y->left != TNULL)
-				{
 					y->left->parent = x;
-				}
 				y->parent = x->parent;
 				if (x->parent == nullptr)
-				{
 					this->root = y;
-				} 
 				else if (x == x->parent->left)
-				{
 					x->parent->left = y;
-				}
 				else
-				{
 					x->parent->right = y;
-				}
 				y->left = x;
 				x->parent = y;
 			};
@@ -437,22 +453,14 @@ namespace ft {
 				NodePtr y = x->left;
 				x->left = y->right;
 				if (y->right != TNULL)
-				{
 					y->right->parent = x;
-				}
 				y->parent = x->parent;
 				if (x->parent == nullptr)
-				{
 					this->root = y;
-				}
 				else if (x == x->parent->right)
-				{
 					x->parent->right = y;
-				} 
 				else
-				{
 					x->parent->left = y;
-				}
 				y->right = x;
 				x->parent = y;
 			};
@@ -487,7 +495,6 @@ namespace ft {
 					else 
 					{
 						u = k->parent->parent->right;
-
 						if (u->color == RED)
 						{
 							u->color = BLACK;
@@ -508,9 +515,7 @@ namespace ft {
 						}
 					}
 					if (k == root)
-					{
 						break;
-					}
 				}
 				root->color = BLACK;
 			};
@@ -562,35 +567,35 @@ namespace ft {
 			void deleteFix(NodePtr x) {
 				
 				NodePtr s;
-				while (x != root && x->color == 0)
+				while (x != root && x->color == BLACK)
 				{
 					if (x == x->parent->left)
 					{
 						s = x->parent->right;
-						if (s->color == 1)
+						if (s->color == RED)
 						{
-							s->color = 0;
-							x->parent->color = 1;
+							s->color = BLACK;
+							x->parent->color = RED;
 							leftRotate(x->parent);
 							s = x->parent->right;
 						}
-						if (s->left->color == 0 && s->right->color == 0)
+						if (s->left->color == BLACK && s->right->color == BLACK)
 						{
-							s->color = 1;
+							s->color = RED;
 							x = x->parent;
 						} 
 						else
 						{
-							if (s->right->color == 0)
+							if (s->right->color == BLACK)
 							{
-								s->left->color = 0;
-								s->color = 1;
+								s->left->color = BLACK;
+								s->color = RED;
 								rightRotate(s);
 								s = x->parent->right;
 							}
 							s->color = x->parent->color;
-							x->parent->color = 0;
-							s->right->color = 0;
+							x->parent->color = BLACK;
+							s->right->color = BLACK;
 							leftRotate(x->parent);
 							x = root;
 						}
@@ -598,36 +603,36 @@ namespace ft {
 					else 
 					{
 						s = x->parent->left;
-						if (s->color == 1)
+						if (s->color == RED)
 						{
-							s->color = 0;
-							x->parent->color = 1;
+							s->color = BLACK;
+							x->parent->color = RED;
 							rightRotate(x->parent);
 							s = x->parent->left;
 						}
-						if (s->right->color == 0 && s->right->color == 0)
+						if (s->right->color == BLACK && s->right->color == BLACK)
 						{
-							s->color = 1;
+							s->color = RED;
 							x = x->parent;
 						}
 						else 
 						{
-							if (s->left->color == 0)
+							if (s->left->color == BLACK)
 							{
-								s->right->color = 0;
-								s->color = 1;
+								s->right->color = BLACK;
+								s->color = RED;
 								leftRotate(s);
 								s = x->parent->left;
 							}
 							s->color = x->parent->color;
-							x->parent->color = 0;
-							s->left->color = 0;
+							x->parent->color = BLACK;
+							s->left->color = BLACK;
 							rightRotate(x->parent);
 							x = root;
 						}
 					}
 				}
-				x->color = 0;
+				x->color = BLACK;
 			}
 
 			void rbTransplant(NodePtr u, NodePtr v) {
@@ -694,7 +699,7 @@ namespace ft {
 				deallocate_node(z);
 				_size--;
 				
-				if (y_original_color == 0)
+				if (y_original_color == BLACK)
 					deleteFix(x);
 			}
 

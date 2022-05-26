@@ -52,7 +52,7 @@ int main() {
 	NAMESPACE::map<int, int>::iterator tree_b = tree.begin();
 	NAMESPACE::map<int, int>::const_iterator tree_bc = tree.begin();
 
-	tree_b->second = 53;
+	// tree_b->first = 53;
 
 	std::cout << "begin = " << tree_b->first << " - " << tree_b->second << std::endl;
 	std::cout << "begin const = " << tree_bc->first << " - " << tree_bc->second << std::endl;
@@ -65,7 +65,6 @@ int main() {
 	// tree.erase(tree_b, tree_e);
 	// tree.clear();
 
-	std::cout << "size = " << tree.size() << std::endl;
 
 	// tree.insert(NAMESPACE::pair< int, int>(0, 42));
 	// tree.insert(NAMESPACE::pair< int, int>(1, 43));
@@ -86,17 +85,18 @@ int main() {
 	
 
 	
-	// tree.erase(0);
-	// tree.erase(1);
-	// tree.erase(2);
-	// tree.erase(3);
-	// tree.erase(4);
-	// tree.erase(5);
-	// tree.erase(6);
-	// tree.erase(7);
-	// tree.erase(8);
-	// tree.erase(9);
-	// tree.erase(10);
+	tree.erase(0);
+	tree.erase(1);
+	tree.erase(2);
+	tree.erase(3);
+	tree.erase(4);
+	tree.erase(5);
+	tree.erase(6);
+	tree.erase(7);
+	tree.erase(8);
+	tree.erase(9);
+	tree.erase(10);
+	std::cout << "size = " << tree.size() << std::endl;
 
 	// std::cout <<  "MAX MAIN = " << tree.get_max() << std::endl;
 	// // tree.erase(tree_b);
