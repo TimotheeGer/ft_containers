@@ -9,23 +9,22 @@
 #include <cstddef>
 #include "../iterators/utils.hpp"
 #include "../iterators/iterator_map.hpp"
-// #include "../iterators/rbt_iterator.hpp"
+
 #define BLACK 0 
 #define RED 1
 
 
 namespace ft {
 
-
 	template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<Key,T>> >
 	class map {
-
-
-		public:
 
 		/* ************************************************************************** */
 		/*                          Member type Definition                            */
 		/* ************************************************************************** */
+
+		public:
+			
 			typedef Key 											key_type;
 			typedef T												mapped_type;
 			typedef ft::pair<key_type, mapped_type> 				value_type;
@@ -43,16 +42,38 @@ namespace ft {
 			typedef Node*											NodePtr;
     		
 			typedef ft::map_iterator<key_type, mapped_type, false>	iterator;
-    		// typedef ft::map_iterator<key_type, mapped_type, true>	const_iterator;
+    		typedef ft::map_iterator<key_type, mapped_type, true>	const_iterator;
     		// typedef ft::reverse_iterator<iterator>                	reverse_iterator;
     		// typedef ft::reverse_iterator<const_iterator>          	const_reverse_iterator;
 
+		/* ************************************************************************** */
+		/*                               Atribues Class                               */
+		/* ************************************************************************** */
 
 		private:
+			
+			class value_compare
+			{
+				friend class map<key_type, mapped_type, key_compare, Alloc>;
+
+				protected:
+
+					Compare comp;
+					value_compare (Compare c) : comp(c) {};
+				
+				public:
+
+					bool operator()(const value_type & x, const value_type & y) const {
+
+						return (comp(x.first, y.first));
+					};
+			};
 
 		/* ************************************************************************** */
 		/*                                Atribues                                    */
 		/* ************************************************************************** */
+
+		private:
 		
 			typename allocator_type::template rebind<Node>::other alloc_node;
 
@@ -63,11 +84,11 @@ namespace ft {
 			size_type											_size;
 			key_compare											_comp;
 
-		public:
-
 		/* ************************************************************************** */
 		/*                               Constructor:                                 */
 		/* ************************************************************************** */
+
+		public:
 
 			// empty (1)	
 			explicit map (const key_compare& comp = key_compare(),
@@ -83,48 +104,67 @@ namespace ft {
 				TNULL->right = nullptr;
 				TNULL->parent = TNULL;
 				root = TNULL;
-				std::cout << "----------------------------RedBlackTree constructor------------------------------------" << std::endl;
-				std::cout << "init TNULL = " << TNULL << std::endl << std::flush;
-				std::cout << "----------------------------/RedBlackTree constructor------------------------------------" << std::endl;
 				_alloc.construct(&root->pair, value_type());
 			
 			}
 
-			void get_test() {
-
-				std::cout << "first = "<< root->pair.first << std::endl;
-				std::cout << "second = " << root->pair.second << std::endl;
-				std::cout << "Color = " << root->color << std::endl;
-				std::cout << "left = " << root->left << std::endl;
-				std::cout << "right = " << root->right << std::endl;
-				std::cout << "parent = " << root->parent << std::endl;
-
-			}
-
-
 			// range (2)	
-			// template <class InputIterator>
-			//   map (InputIterator first, InputIterator last,
-			//        const key_compare& comp = key_compare(),
-			//        const allocator_type& alloc = allocator_type());
+			template <class InputIterator>
+			map (InputIterator first, InputIterator last,
+					const key_compare& comp = key_compare(),
+					const allocator_type& alloc = allocator_type()) {
+				
+				_alloc = alloc;
+				_comp = comp;
+				_size = 0;
+
+				TNULL = alloc_node.allocate(1);
+				TNULL->color = BLACK;
+				TNULL->left = nullptr;
+				TNULL->right = nullptr;
+				TNULL->parent = TNULL;
+				root = TNULL;
+				_alloc.construct(&root->pair, value_type());
+
+				insert(first, last);				
+			};
+			
 			// copy (3)	
-			// map (const map& x);
+			map (const map& x) {
+				
+				_alloc = x._alloc;
+				_comp = x._comp;
+
+				insert(x.begin(), x.end());
+			};
 
 			// copy (1)	
-			//  map& operator= (const map& x);
+			 map& operator= (const map& x) {
+
+				 if (this == &x)
+				 	return (*this);
+				clear();
+				insert(x.begin(), x.end());
+				return (*this);
+			 };
 
 			// Destructor(1)
-			// ~map();
+			~map() {
+				
+				if (_size > 0)
+					clear();
+				deallocate_node(TNULL);
+			};
 
 		/* ************************************************************************** */
 		/*                                 Iterator:                                  */
 		/* ************************************************************************** */
 
-			iterator begin()				{ return iterator(minimum(root), TNULL, root); };
-			// const_iterator begin() const	{ return iterator(minimum(root), TNULL); };
+			iterator begin()				{ return iterator(minimum(root), TNULL, &root); };
+			const_iterator begin() const	{ return iterator(minimum(root), TNULL, &root); };
 			
-			iterator end() 					{ return iterator(TNULL, TNULL, root); };
-			// const_iterator end() const;
+			iterator end() 					{ return iterator(TNULL, TNULL, &root); };
+			const_iterator end() const		{ return iterator(TNULL, TNULL, &root); };
 			
 			//reverse_iterator rbegin();
 			// const_reverse_iterator rbegin() const;
@@ -137,7 +177,6 @@ namespace ft {
 		/*                                 Capacity:                                  */
 		/* ************************************************************************** */
 
-
 			bool 		empty() const { return (size() == 0); };
 
 			size_type	size() const { return _size; };
@@ -148,7 +187,17 @@ namespace ft {
 		/*                            	 Element Access:                              */
 		/* ************************************************************************** */
 
-			//mapped_type& operator[] (const key_type& k);
+			mapped_type& operator[] (const key_type& k){
+
+				NodePtr tmp = searchTreeKey(root, k);
+
+				if (tmp == TNULL)
+				{
+					insert(ft::make_pair(k, mapped_type()));
+					tmp = searchTreeKey(root, k);
+				}
+				return (tmp->pair.second);
+			};
 
 		/* ************************************************************************** */
 		/*                            		 Modifiers:                               */
@@ -161,11 +210,8 @@ namespace ft {
 				NodePtr exist = searchTreeKey(root, val.first);
 
 				if (exist == TNULL)
-				{
-					return ft::make_pair<iterator, bool>(iterator(insert_node(val), TNULL, root), true);
-				}
-				return ft::make_pair<iterator, bool>(iterator(exist, TNULL, root), false);
-
+					return ft::make_pair<iterator, bool>(iterator(insert_node(val), TNULL, &root), true);
+				return ft::make_pair<iterator, bool>(iterator(exist, TNULL, &root), false);
 			};
 
 			// with hint (2)	
@@ -190,20 +236,14 @@ namespace ft {
 			// (1)	
 			void erase (iterator position) {
 
-				// std::cout << "ERASE IT" << std::endl << std::flush;
 				deleteNodeHelper(root, position->first);
-				// std::cout << "ERASE IT FIN" << std::endl << std::flush;
 			};
 			
 			// (2)	
 			size_type erase (const key_type& k) {
-				std::cout << "----------------------------MAP------------------------------------" << std::endl;
-				std::cout << "ROOT de map = " << get_root() << std::endl;
-				std::cout << "ERASE KEY = " << k << " max = " << get_max() << std::endl;
 				
 				NodePtr exist = searchTreeKey(root, k);
 
-				std::cout << "----------------------------/MAP------------------------------------" << std::endl;
 				if (exist != TNULL)
 				{
 					deleteNodeHelper(root, k);
@@ -215,42 +255,53 @@ namespace ft {
 			// (3)	
 			void erase (iterator first, iterator last) {
 
-				// std::cout << "ROOT = " << root << std::endl << std::flush;
-				// std::cout << "TEST ERASE IT" << std::endl;
-				std::cout << "MAX ERASE = " << get_max() << std::endl << std::flush;
-				std::cout << "first = " << first->first << std::endl << std::flush;
-				std::cout << "last = " << last->first << std::endl << std::flush;
 				iterator	tmp;
 
-				// tmp = ++first;
 				while (first != last)
 				{
-					std::cout << "PRINT TREE" << std::endl;
-					// printTree();
-					std::cout << "FIRST = " << first->first << std::endl;
-					tmp = first;
-					first++;
+					tmp = first++;
 					erase(tmp);
-					std::cout << "-------------------------------------------------" << std::endl;
 				}
 			};
 
-			// void swap (map& x);
+			void swap (map& x) {
 
-			// void clear() {
+				NodePtr tmp_root = x.root;
+				size_type tmp_size = x._size;
+				allocator_type tmp_alloc = x._alloc;
+				key_compare tmp_comp = x._comp; 
+				
+				x.set_root(root);
+				x.set_size(_size);
+				x._alloc = _alloc;
+				x._comp = _comp;
+				
+				set_root(tmp_root);
+				set_size(tmp_size);
+				_alloc = tmp_alloc;
+				_comp = tmp_comp;
+			};
 
-			// 	erase(begin(), tmp);
-			// };
+			void clear() {
+
+				erase(begin(), end());
+			};
 
 		/* ************************************************************************** */
 		/*                             		Observers:                                */
 		/* ************************************************************************** */
 
 
-			// key_compare key_comp() const;
+			key_compare key_comp() const {
+
+				return (key_compare());
+			};
 
 
-			// value_compare value_comp() const;
+			value_compare value_comp() const {
+
+				return (value_compare(key_compare()));
+			};
 
 
 		/* ************************************************************************** */
@@ -258,27 +309,72 @@ namespace ft {
 		/* ************************************************************************** */
 
 
-			//    iterator find (const key_type& k);
-			// const_iterator find (const key_type& k) const;
+			iterator find (const key_type& k) {
 
-			// size_type count (const key_type& k) const;
+				NodePtr tmp = searchTreeKey(root, k);
+				
+				if (tmp != TNULL)
+					return (iterator(tmp));
+				else
+					return (end()); 
+			};
+
+			// const_iterator find (const key_type& k) const {
+				
+			// 	NodePtr tmp = searchTreeKey(root, k);
+				
+			// 	if (tmp != TNULL)
+			// 		return (iterator(tmp));
+			// 	else
+			// 		return (end());
+			// };
+
+			size_type count (const key_type& k) const {
+
+				return (searchTreeKey(root, k) != TNULL);
+			};
 
 
-			// iterator lower_bound (const key_type& k);
+			iterator lower_bound (const key_type& k) {
+
+				iterator itb = begin();
+				iterator ite = end();
+
+				while (itb != ite)
+				{
+					if (key_compare((*itb).first, k) == false)
+						break;
+					itb++;
+				}
+				return (itb);
+			};
+
 			// const_iterator lower_bound (const key_type& k) const;
 
-			// iterator upper_bound (const key_type& k);
+			iterator upper_bound (const key_type& k) {
+
+				iterator itb = begin();
+				iterator ite = end();
+
+				while (itb != ite)
+				{
+					if (key_compare(k, (*itb).first))
+						break;
+					itb++;
+				}
+				return (itb);
+			};
 			// const_iterator upper_bound (const key_type& k) const;
 
-			// pair<const_iterator,const_iterator> equal_range (const key_type& k) const;
-			// pair<iterator,iterator>             equal_range (const key_type& k);
+			// pair<const_iterator,const_iterator> equal_range (const key_type& k) const {
 
+			// 	return (ft::make_pair(lower_bound(k), upper_bound(k)));
+			// };
 
+			pair<iterator,iterator>             equal_range (const key_type& k) {
 
-			NodePtr get_root() const { return root; };
-			// Tree get_left() const { return root->left; };
-			// Tree get_right() const { return root->right; };
-
+				return (ft::make_pair(lower_bound(k), upper_bound(k)));
+			};
 
 		/* ************************************************************************** */
 		/*                           		Allocator:                                */
@@ -290,10 +386,23 @@ namespace ft {
 				return allocator_type();
 			};
 		
+		
 		/* ************************************************************************** */
 		/*                           		  Utils:                                  */
 		/* ************************************************************************** */
 		
+		private:
+		
+		/* ************************************************************************** */
+		/*                           		 get/set:                                 */
+		/* ************************************************************************** */
+		
+			NodePtr		get_root() const { return root; };
+			size_type	get_size() const { return size(); };
+
+			void		set_root(NodePtr p_root) { root = p_root; };
+			void		set_size(size_type size) { _size = size; };
+
 		/* ************************************************************************** */
 		/*                           		 insert:                                  */
 		/* ************************************************************************** */
@@ -443,9 +552,9 @@ namespace ft {
 				if (node->parent->parent == nullptr) { return node; }
     			
 				insertFix(node);
-				
 				return node;
 			};
+
 		/* ************************************************************************** */
 		/*                           		 delete:                                  */
 		/* ************************************************************************** */
@@ -524,17 +633,11 @@ namespace ft {
 			void rbTransplant(NodePtr u, NodePtr v) {
 				
 				if (u->parent == nullptr)
-				{
 					root = v;
-				} 
 				else if (u == u->parent->left)
-				{
 					u->parent->left = v;
-				} 
 				else
-				{
 					u->parent->right = v;
-				}
 				v->parent = u->parent;
 			}
 
@@ -545,21 +648,15 @@ namespace ft {
 				while (node != TNULL)
 				{
 					if (node->pair.first == key)
-					{
 						z = node;
-					}
 					if (node->pair.first <= key)
-					{
 						node = node->right;
-					} 
 					else
-					{
 						node = node->left;
-					}
 				}
 				if (z == TNULL)
 				{
-					std::cout << "Key not found in the tree" << std::endl;
+					// std::cout << "Key not found in the tree" << std::endl;
 					return;
 				}
 
@@ -581,9 +678,7 @@ namespace ft {
 					y_original_color = y->color;
 					x = y->right;
 					if (y->parent == z)
-					{
 						x->parent = y;
-					} 
 					else 
 					{
 						rbTransplant(y, y->right);
@@ -596,26 +691,24 @@ namespace ft {
 					y->color = z->color;
 				}
 				
-				// delete z;
 				deallocate_node(z);
+				_size--;
 				
 				if (y_original_color == 0)
-				{
 					deleteFix(x);
-				}
 			}
 
-		void deleteNode(value_type data) {
-    		
-			deleteNodeHelper(root, data);
-			_size--;
-  		}
+			void deleteNode(value_type data) {
+				
+				deleteNodeHelper(root, data);
+				_size--;
+			}
 
-		void	deallocate_node(NodePtr node)
-		{
-			_alloc.destroy(&node->pair);
-			alloc_node.deallocate(node, 1);
-		}
+			void	deallocate_node(NodePtr node)
+			{
+				_alloc.destroy(&node->pair);
+				alloc_node.deallocate(node, 1);
+			}
 
 		/* ************************************************************************** */
 		/*                           		 Min/Max:                                 */
@@ -624,18 +717,14 @@ namespace ft {
 			NodePtr minimum(NodePtr node) {
     			
 				while (node->left != TNULL)
-				{
     			  node = node->left;
-    			}
     			return node;
   			}
 
 			NodePtr maximum(NodePtr node) {
    				
 				while (node->right != TNULL)
-				{
       				node = node->right;
-    			}
     			return node;
   			}
 
@@ -647,15 +736,6 @@ namespace ft {
 		/* ************************************************************************** */
 		/*                           		 search:                                  */
 		/* ************************************************************************** */
-  		
-		  	// NodePtr searchTree(NodePtr node, const value_type& key) {
-    
-			// 	if (node == TNULL || key.first == node->pair.first)
-      		// 		return node;
-    		// 	if (key.first < node->pair.first)
-    		// 		return searchTree(node->left, key);
-    		// 	return searchTree(node->right, key);
-  			// }
 
 			NodePtr searchTreeKey(NodePtr node, const key_type& key) {
     
@@ -692,14 +772,14 @@ namespace ft {
 					printHelper(root->right, indent, true);
 				}
   			}
+		
+		public:
 
 			void printTree() {
     			
 				if (root) { printHelper(this->root, "", true); }
-  			}	
-		
+  			}		
 	};
-
 };
 
 #endif

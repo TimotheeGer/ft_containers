@@ -19,7 +19,6 @@ namespace ft {
 		Node *left;
 		Node *right;
 		Node *parent;
-		Node *tNULL;
 		int color;
 	};
 
@@ -59,9 +58,9 @@ namespace ft {
 		/*                                Atribues                                    */
 		/* ************************************************************************** */
 
-			NodePtr	_pNode;
-			NodePtr _root;
-			NodePtr	tNULL;
+			NodePtr		_pNode;
+			NodePtr*	_root;
+			NodePtr		tNULL;
 
 		/* ************************************************************************** */
 		/*                               Constructor:                                 */
@@ -69,7 +68,7 @@ namespace ft {
 		
 			map_iterator() : _pNode(NULL), tNULL(NULL), _root(NULL) {};
 		
-			map_iterator(NodePtr n, NodePtr TNULL, NodePtr root) :_pNode(n) , tNULL(TNULL), _root(root) { };
+			map_iterator(NodePtr n, NodePtr TNULL, NodePtr* root) :_pNode(n) , tNULL(TNULL), _root(root) { };
 
 			map_iterator(const map_iterator<key, T, false> &copy) : _pNode(copy._pNode), tNULL(copy.tNULL), _root(copy._root) {};
 		
@@ -97,42 +96,27 @@ namespace ft {
 			Self& operator++() {
 
 				if (_pNode == maximum(_root))
-				{
 					_pNode = tNULL;
-				}
 				else
-				{
 					_pNode = successor(_pNode);
-				}
 				return *this;
 			}
 			
 			Self operator++(int) {
-				std::cout << "----------------------------ITERATOR------------------------------------" << std::endl;
-				std::cout << "PNODE = " << _pNode->pair.first << std::endl << std::flush;
-				std::cout << "OP++ root = " << _root << std::endl << std::flush;
-				std::cout << "MAXIMUM = " << maximum(_root)->pair.first << std::endl;
-				std::cout << "MINIMUM = " << minimum(_root)->pair.first << std::endl;
+
 				map_iterator res(*this);
 
-				if (_pNode == maximum(_root))
-				{
-					std::cout << "OP++1" << std::endl << std::flush;
+				if (_pNode == maximum(*_root))
 					_pNode = tNULL;
-				}
 				else
-				{
-					std::cout << "OP++2" << std::endl << std::flush;
 					_pNode = successor(_pNode);
-				}
-				std::cout << "----------------------------/ITERATOR------------------------------------" << std::endl;
 				return res;
 			}
 			
 			Self& operator--() {
 
 				if (_pNode == tNULL)
-					_pNode = maximum(_root);
+					_pNode = maximum(*_root);
 				else
 					_pNode = predecessor(_pNode);
 				return *this;
@@ -142,7 +126,7 @@ namespace ft {
 
 				map_iterator res(*this);
 				if (_pNode == tNULL)
-					_pNode = maximum(_root);
+					_pNode = maximum(*_root);
 				else
 					_pNode = predecessor(_pNode);
 				return res;
@@ -164,12 +148,8 @@ namespace ft {
 
 			NodePtr minimum(NodePtr node) {
 				
-				std::cout << "NODE MIN = " << node->pair.first << std::endl;
-				while (node->left != tNULL){
-				std::cout << "YOOOOOOOOOO" << std::endl << std::flush;
-
+				while (node->left != tNULL)
 					node = node->left;
-				}
 				return node;
 			}
 
