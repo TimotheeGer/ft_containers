@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   iterator_map.hpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/26 15:28:38 by tigerber          #+#    #+#             */
+/*   Updated: 2022/05/30 17:12:29 by tigerber         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef ITERATOR_MAP_HPP
 #define ITERATOR_MAP_HPP
 
@@ -7,52 +19,67 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <cstddef>
+#include "./utils.hpp"
+
 #define BLACK 0 
 #define RED 1
 
 namespace ft {
+		
+		/* ************************************************************************** */
+		/*                          	Structur Node                            	  */
+		/* ************************************************************************** */
+			
+			template <typename T>
+			struct Node {
 
-	template <typename T>
-	struct Node {
+				T pair;
+				Node *left;
+				Node *right;
+				Node *parent;
+				int color;
+			};
 
-		T pair;
-		Node *left;
-		Node *right;
-		Node *parent;
-		int color;
-	};
+		/* ************************************************************************** */
+		/*                          	Structur Check                                */
+		/* ************************************************************************** */
 
-	template<bool _const, typename type_const, typename type_normal>
-	struct check_const;
+			template<bool _const, typename type_const, typename type_normal>
+			struct check_const_map;
 
-	template<typename type_const, typename type_normal>
-	struct check_const<true, type_const, type_normal> {
+			template<typename type_const, typename type_normal>
+			struct check_const_map<true, type_const, type_normal> {
 
-		typedef type_const type;
-	};
+				typedef type_const type;
+			};
 
+			template<typename type_const, typename type_normal>
+			struct check_const_map<false, type_const, type_normal> {
 
-	template<typename type_const, typename type_normal>
-	struct check_const<false, type_const, type_normal> {
-
-		typedef type_normal type;
-	};
-
+				typedef type_normal type;
+			};
+	
+		/* ************************************************************************** */
+		/*                         Iterator / Const Iterator: :                       */
+		/* ************************************************************************** */
+	
 	template<class key, class T, bool _const = false>
 	class map_iterator {
 
-		public:
-		
 		/* ************************************************************************** */
 		/*                          Member type Definition                            */
 		/* ************************************************************************** */			
 		
-			typedef map_iterator<key, T> 												Self;
-    		typedef ft::pair<key, T>													value_type;
-			typedef typename check_const<_const, const value_type&, value_type&>::type	reference;
-			typedef typename check_const<_const, const value_type*, value_type*>::type	pointer;
-			typedef Node<value_type>													Node;
-			typedef Node*																NodePtr;
+		public:
+		
+			typedef map_iterator<key, T> 													Self;
+    		typedef ft::pair<key, T>														value_type;
+			typedef ptrdiff_t																difference_type;
+			typedef std::bidirectional_iterator_tag 										iterator_category;
+			typedef typename check_const_map<_const, const value_type&, value_type&>::type	reference;
+			typedef typename check_const_map<_const, const value_type*, value_type*>::type	pointer;
+			typedef Node<value_type>														Node;
+			typedef Node*																	NodePtr;
 		
 		/* ************************************************************************** */
 		/*                                Atribues                                    */

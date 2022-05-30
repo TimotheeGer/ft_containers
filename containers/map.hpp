@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   map.hpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/26 15:28:45 by tigerber          #+#    #+#             */
+/*   Updated: 2022/05/30 20:07:38 by tigerber         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MAP_HPP
 #define MAP_HPP
 
@@ -7,8 +19,10 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <cstddef>
+#include "./color.hpp"
 #include "../iterators/utils.hpp"
 #include "../iterators/iterator_map.hpp"
+#include "../iterators/reverse_iterator.hpp"
 
 #define BLACK 0 
 #define RED 1
@@ -22,7 +36,7 @@ namespace ft {
 		/* ************************************************************************** */
 		/*                          Member type Definition                            */
 		/* ************************************************************************** */
-
+		
 		public:
 			
 			typedef Key 											key_type;
@@ -43,8 +57,8 @@ namespace ft {
     		
 			typedef ft::map_iterator<key_type, mapped_type, false>	iterator;
     		typedef ft::map_iterator<key_type, mapped_type, true>	const_iterator;
-    		// typedef ft::reverse_iterator<iterator>                	reverse_iterator;
-    		// typedef ft::reverse_iterator<const_iterator>          	const_reverse_iterator;
+    		typedef ft::reverse_iterator<iterator>                	reverse_iterator;
+    		typedef ft::reverse_iterator<const_iterator>          	const_reverse_iterator;
 
 		/* ************************************************************************** */
 		/*                               Atribues Class                               */
@@ -160,17 +174,17 @@ namespace ft {
 		/*                                 Iterator:                                  */
 		/* ************************************************************************** */
 
-			iterator begin()				{ return iterator(minimum(root), TNULL, &root); };
-			const_iterator begin() const	{ return iterator(minimum(root), TNULL, &root); };
+			iterator begin()						{ return iterator(minimum(root), TNULL, &root); };
+			const_iterator begin() const			{ return iterator(minimum(root), TNULL, &root); };
 			
-			iterator end() 					{ return iterator(TNULL, TNULL, &root); };
-			const_iterator end() const		{ return iterator(TNULL, TNULL, &root); };
+			iterator end() 							{ return iterator(TNULL, TNULL, &root); };
+			const_iterator end() const				{ return iterator(TNULL, TNULL, &root); };
 			
-			//reverse_iterator rbegin();
-			// const_reverse_iterator rbegin() const;
+			reverse_iterator rbegin() 				{ return reverse_iterator(end()); };
+			const_reverse_iterator rbegin() const 	{ return const_reverse_iterator(end()); };
 			
-			// reverse_iterator rend();
-			// const_reverse_iterator rend() const; 
+			reverse_iterator rend() 				{ return reverse_iterator(begin()); };
+			const_reverse_iterator rend() const 	{ return const_reverse_iterator(begin()); }; 
 
 
 		/* ************************************************************************** */
@@ -207,10 +221,18 @@ namespace ft {
 			// single element (1)	
 			pair<iterator,bool> insert (const value_type& val) {
 
+				NodePtr test = searchTreeKey(root, val.first - 1);
+				// std::cout << "TEST IN = " << val.first - 1 << std::endl;
+								
 				NodePtr exist = searchTreeKey(root, val.first);
 
 				if (exist == TNULL)
-					return ft::make_pair<iterator, bool>(iterator(insert_node(val), TNULL, &root), true);
+				{
+					iterator tmp = iterator(insert_node(val), TNULL, &root);
+					std::cout << "TEST = " << val.first + 1 << std::endl;
+					insert_node(value_type(val.first + 1, 0));
+					return ft::make_pair<iterator, bool>(tmp, true);
+				}
 				return ft::make_pair<iterator, bool>(iterator(exist, TNULL, &root), false);
 			};
 
@@ -771,8 +793,9 @@ namespace ft {
 						indent += "|  ";
 					}
 
-					std::string sColor = root->color ? "RED" : "BLACK";
-					std::cout << root->pair.first << "(" << sColor << ")" << std::endl;
+					std::string sColor = root->color ? "\033[31mRED\033[0m" : "\033[30mBLACK\033[0m";
+					std::cout << "[" << C_YELLOW <<root->pair.first << C_RESET << "/" 
+								     << C_GREEN << root->pair.second << C_RESET << "](" << sColor << ")" << std::endl;
 					printHelper(root->left, indent, false);
 					printHelper(root->right, indent, true);
 				}
