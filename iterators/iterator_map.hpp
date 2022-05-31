@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 15:28:38 by tigerber          #+#    #+#             */
-/*   Updated: 2022/05/30 17:12:29 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/05/31 18:43:37 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,8 +141,10 @@ namespace ft {
 			}
 			
 			Self& operator--() {
-
-				if (_pNode == tNULL)
+				
+				if (_pNode == minimum(*_root))
+					_pNode = tNULL;
+				else if (_pNode == tNULL)
 					_pNode = maximum(*_root);
 				else
 					_pNode = predecessor(_pNode);
@@ -152,7 +154,10 @@ namespace ft {
 			Self operator--(int) {
 
 				map_iterator res(*this);
-				if (_pNode == tNULL)
+				
+				if (_pNode == minimum(*_root))
+					_pNode = tNULL;
+				else if (_pNode == tNULL)
 					_pNode = maximum(*_root);
 				else
 					_pNode = predecessor(_pNode);

@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/26 16:01:05 by tigerber          #+#    #+#             */
-/*   Updated: 2022/05/30 19:49:31 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/05/31 18:45:03 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 #include <list>
 
-#define NAMESPACE ft
+#define NAMESPACE std
 
 int main() {
 
@@ -52,8 +52,9 @@ int main() {
 	tree.insert(NAMESPACE::pair< int, int>(8, 50));
 	tree.insert(NAMESPACE::pair< int, int>(9, 51));
 	tree.insert(NAMESPACE::pair< int, int>(10, 52));
+	tree.insert(NAMESPACE::pair< int, int>(98, 52));
 	// std::cout << "size = " << tree.size() << std::endl;
-	tree.printTree();
+	// tree.printTree();
 
 
 	std::cout << "------------------------------------------" << std::endl;
@@ -64,21 +65,24 @@ int main() {
 	NAMESPACE::map<int, int>::reverse_iterator tree_re = tree.rend();
 	NAMESPACE::map<int, int>::const_iterator tree_bc = tree.begin();
 
-	NAMESPACE::vector<int>::iterator vec_b = vec.begin();
-	NAMESPACE::vector<int>::iterator vec_e = vec.end();
-	NAMESPACE::vector<int>::reverse_iterator vec_rb = vec.rbegin();
-	NAMESPACE::vector<int>::reverse_iterator vec_re = vec.rend();
-	NAMESPACE::vector<int>::const_iterator vec_bc = vec.begin();
+	// NAMESPACE::vector<int>::iterator vec_b = vec.begin();
+	// NAMESPACE::vector<int>::iterator vec_e = vec.end();
+	// NAMESPACE::vector<int>::reverse_iterator vec_rb = vec.rbegin();
+	// NAMESPACE::vector<int>::reverse_iterator vec_re = vec.rend();
+	// NAMESPACE::vector<int>::const_iterator vec_bc = vec.begin();
 
 	// tree_b->first = 53;
+	// --tree_e;
 	// --tree_re;
-	// tree_re--;
+	// --tree_re;
+	// --vec_re;
+	// --vec_re;
 	// tree_rb++;
 
 	std::cout << "begin = " << tree_b->first << " - " << tree_b->second << std::endl;
 	std::cout << "end = " << tree_e->first << " - " << tree_e->second << std::endl;
 	std::cout << "rbegin = " << tree_rb->first << " - " << tree_rb->second << std::endl;
-	// std::cout << "rend = " << tree_re->first << " - " << tree_re->second << std::endl;
+	std::cout << "rend = " << tree_re->first << " - " << tree_re->second << std::endl;
 	std::cout << "------------------------------------------" << std::endl;
 
 	// std::cout << "VEC = begin = " << *vec_b <<  std::endl;
@@ -132,7 +136,7 @@ int main() {
 	// // tree.erase(tree_e);
 	// std::cout << "TEST ERASE " << std::endl;
 
-	tree.printTree();
+	// tree.printTree();
 
 	// std::cout << "TEST00" << std::endl;
 	// tree_b--;

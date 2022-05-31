@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 15:28:45 by tigerber          #+#    #+#             */
-/*   Updated: 2022/05/30 20:07:38 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/05/31 18:29:53 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,9 @@ namespace ft {
 				TNULL->left = nullptr;
 				TNULL->right = nullptr;
 				TNULL->parent = TNULL;
+				_alloc.construct(&TNULL->pair, ft::pair<key_type, mapped_type>(_size, 0));
 				root = TNULL;
-				_alloc.construct(&root->pair, value_type());
+				// _alloc.construct(&root->pair, value_type());
 			
 			}
 
@@ -220,17 +221,12 @@ namespace ft {
 
 			// single element (1)	
 			pair<iterator,bool> insert (const value_type& val) {
-
-				NodePtr test = searchTreeKey(root, val.first - 1);
-				// std::cout << "TEST IN = " << val.first - 1 << std::endl;
 								
 				NodePtr exist = searchTreeKey(root, val.first);
 
 				if (exist == TNULL)
 				{
 					iterator tmp = iterator(insert_node(val), TNULL, &root);
-					std::cout << "TEST = " << val.first + 1 << std::endl;
-					insert_node(value_type(val.first + 1, 0));
 					return ft::make_pair<iterator, bool>(tmp, true);
 				}
 				return ft::make_pair<iterator, bool>(iterator(exist, TNULL, &root), false);
@@ -550,6 +546,8 @@ namespace ft {
 				node->left = TNULL;
 				node->right = TNULL;
 				_alloc.construct(&node->pair, val);
+				_alloc.destroy(&TNULL->pair);
+				_alloc.construct(&TNULL->pair, ft::pair<key_type, mapped_type>(_size + 1, 0));
 
 				_size++;
 

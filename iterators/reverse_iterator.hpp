@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 16:47:10 by tigerber          #+#    #+#             */
-/*   Updated: 2022/05/30 17:57:22 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/05/31 18:40:18 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,11 @@ namespace ft {
 
 			iterator_type base() const { return m_ptr; };
 
-			reverse_iterator& operator++() { --m_ptr; return *this; };
-
-			reverse_iterator operator++(int) { reverse_iterator tmp = *this; --m_ptr; return tmp; };
+			reverse_iterator& operator++() { this->m_ptr.operator--(0); return *this; };
+			reverse_iterator operator++(int) { reverse_iterator<Iterator> tmp(*this); this->m_ptr.operator--(0); return tmp; };
 			
-			reverse_iterator& operator--() { ++m_ptr; return *this; };
-			reverse_iterator operator--(int) { reverse_iterator tmp = *this; ++m_ptr; return tmp; };
+			reverse_iterator& operator--() { this->m_ptr.operator++(0); return *this; };
+			reverse_iterator operator--(int) { reverse_iterator<Iterator> tmp(*this); this->m_ptr.operator++(0); return tmp; };
 			
 			reverse_iterator operator+=(int nb) { m_ptr -= nb; return *this; };
 			reverse_iterator operator-=(int nb) { m_ptr += nb; return *this; };
