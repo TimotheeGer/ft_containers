@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 15:28:45 by tigerber          #+#    #+#             */
-/*   Updated: 2022/05/31 18:29:53 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/01 15:30:35 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 
 namespace ft {
 
-	template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<Key, T>> >
+	template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<Key, T> > >
 	class map {
 
 		/* ************************************************************************** */
@@ -114,8 +114,8 @@ namespace ft {
 
 				TNULL = alloc_node.allocate(1);
 				TNULL->color = BLACK;
-				TNULL->left = nullptr;
-				TNULL->right = nullptr;
+				TNULL->left = NULL;
+				TNULL->right = NULL;
 				TNULL->parent = TNULL;
 				_alloc.construct(&TNULL->pair, ft::pair<key_type, mapped_type>(_size, 0));
 				root = TNULL;
@@ -135,8 +135,8 @@ namespace ft {
 
 				TNULL = alloc_node.allocate(1);
 				TNULL->color = BLACK;
-				TNULL->left = nullptr;
-				TNULL->right = nullptr;
+				TNULL->left = NULL;
+				TNULL->right = NULL;
 				TNULL->parent = TNULL;
 				root = TNULL;
 				_alloc.construct(&root->pair, value_type());
@@ -154,14 +154,14 @@ namespace ft {
 			};
 
 			// copy (1)	
-			 map& operator= (const map& x) {
+			map& operator= (const map& x) {
 
-				 if (this == &x)
-				 	return (*this);
+				if (this == &x)
+					return (*this);
 				clear();
 				insert(x.begin(), x.end());
 				return (*this);
-			 };
+			};
 
 			// Destructor(1)
 			~map() {
@@ -456,7 +456,7 @@ namespace ft {
 				if (y->left != TNULL)
 					y->left->parent = x;
 				y->parent = x->parent;
-				if (x->parent == nullptr)
+				if (x->parent == NULL)
 					this->root = y;
 				else if (x == x->parent->left)
 					x->parent->left = y;
@@ -473,7 +473,7 @@ namespace ft {
 				if (y->right != TNULL)
 					y->right->parent = x;
 				y->parent = x->parent;
-				if (x->parent == nullptr)
+				if (x->parent == NULL)
 					this->root = y;
 				else if (x == x->parent->right)
 					x->parent->right = y;
@@ -542,7 +542,7 @@ namespace ft {
 				
 				NodePtr node = alloc_node.allocate(1);
 				node->color = RED;
-				node->parent = nullptr;
+				node->parent = NULL;
 				node->left = TNULL;
 				node->right = TNULL;
 				_alloc.construct(&node->pair, val);
@@ -551,7 +551,7 @@ namespace ft {
 
 				_size++;
 
-				NodePtr y = nullptr;
+				NodePtr y = NULL;
 				NodePtr x = this->root;
 
 				while (x != TNULL)
@@ -565,16 +565,16 @@ namespace ft {
 
 				node->parent = y;
 
-				if (y == nullptr)
+				if (y == NULL)
 					root = node;
 				else if (node->pair.first < y->pair.first)
 					y->left = node;
 				else 
 					y->right = node; 
 
-				if (node->parent == nullptr) { node->color = 0; return node; }
+				if (node->parent == NULL) { node->color = 0; return node; }
 
-				if (node->parent->parent == nullptr) { return node; }
+				if (node->parent->parent == NULL) { return node; }
     			
 				insertFix(node);
 				return node;
@@ -657,7 +657,7 @@ namespace ft {
 
 			void rbTransplant(NodePtr u, NodePtr v) {
 				
-				if (u->parent == nullptr)
+				if (u->parent == NULL)
 					root = v;
 				else if (u == u->parent->left)
 					u->parent->left = v;

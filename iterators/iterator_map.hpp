@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 15:28:38 by tigerber          #+#    #+#             */
-/*   Updated: 2022/05/31 18:43:37 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/01 15:30:04 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,10 +164,13 @@ namespace ft {
 				return res;
 			}
 			
-			bool operator==(const Self& s) {
+			template <typename T1>
+			bool operator==(const T1& s) {
 
 				return _pNode == s._pNode;
 			}
+
+			
 			
 			bool operator!=(const Self& s) {
 				

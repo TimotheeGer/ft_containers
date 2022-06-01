@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 16:49:09 by tigerber          #+#    #+#             */
-/*   Updated: 2022/05/30 16:49:48 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/01 18:59:28 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -354,50 +354,29 @@ namespace ft {
 				return iterator(&_vector[index]);
 			};
 
-    iterator erase (iterator first, iterator last) {
-      size_type start = first - begin();
-      difference_type offset = last - first;
+			iterator erase (iterator first, iterator last) {
+				
+				size_type start = first - begin();
+				difference_type offset = last - first;
 
-      if (first == last)
-        return iterator(first);
+				if (first == last)
+					return iterator(first);
 
-      for (iterator it = first; it != last; it++)
-        _alloc.destroy(&(*it));
+				for (iterator it = first; it != last; it++)
+					_alloc.destroy(&(*it));
 
-      _size -= offset;
-      if (start < _size) {
-        for (size_type i = start; i < _size; i++) {
-          _alloc.construct(&_vector[i], _vector[i + offset]);
-          _alloc.destroy(&_vector[i + offset]);
-        }
-      }
-	    return iterator(&_vector[start]);
-    };
-			// iterator 				erase (iterator first, iterator last) {
-			// 	// 0 1 2 3 4 5 6 7 8 9 10 11 12
-			// 	// 0 0 0 3 4 5 6 7 8 9 10 11 12
-			// 	// 3 4 5 6 7 8 9 10 11 12
-			// 	difference_type index_first = first - begin();
-			// 	std::cout << "index_first = " << index_first << std::endl; 
-			// 	difference_type index_last = last - begin();
-			// 	std::cout << "index_last = " << index_last << std::endl; 
-			// 	size_t i = index_first;
-			// 	size_t j = 0;
+				_size -= offset;
+				if (start < _size)
+				{
+					for (size_type i = start; i < _size; i++)
+					{
+						_alloc.construct(&_vector[i], _vector[i + offset]);
+						_alloc.destroy(&_vector[i + offset]);
+					}
+				}
+				return iterator(&_vector[start]);
+			};
 
-			// 	while (i < index_last)
-			// 	{
-			// 			_alloc.destroy(&_vector[i]);
-			// 	}
-				// while ()
-					// if (index_last + j < _size)
-					// {
-					// 	std::cout << "_vector[index_last + j] = " << _vector[index_last + j] << std::endl;
-					// 	_alloc.construct(&_vector[i], _vector[index_last + j]);
-					// 	_alloc.destroy(&_vector[index_last + j++]);
-					// }
-			// 	_size = _size - (index_last - index_first);
-			// 	return iterator(&_vector[index_last]);
-			// }
 
 			void					swap (vector& x) {
 

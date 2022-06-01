@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/26 16:01:05 by tigerber          #+#    #+#             */
-/*   Updated: 2022/05/31 18:45:03 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/01 15:19:28 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
 
 int main() {
 
-	
 	NAMESPACE::map< int, int> tree;
 	NAMESPACE::vector< int > vec;
 	std::map<int, int> og;
@@ -61,10 +60,21 @@ int main() {
 
 	NAMESPACE::map<int, int>::iterator tree_b = tree.begin();
 	NAMESPACE::map<int, int>::iterator tree_e = tree.end();
+	NAMESPACE::map<int, int>::const_iterator const_tree_b = tree.begin();
+	NAMESPACE::map<int, int>::const_iterator const_tree_e = tree.end();
 	NAMESPACE::map<int, int>::reverse_iterator tree_rb = tree.rbegin();
 	NAMESPACE::map<int, int>::reverse_iterator tree_re = tree.rend();
 	NAMESPACE::map<int, int>::const_iterator tree_bc = tree.begin();
-
+	NAMESPACE::map<int, int>::iterator ite = tree.end();
+	NAMESPACE::map<int, int>::const_iterator it[2];
+	
+	it[0] = tree.lower_bound(-1);
+	std::cout << "IT = "<< it[0]->first << std::endl;
+	it[1] = tree_e;
+	
+	if (it[0] == ite)
+		std::cout << "OK" << std::endl;
+	
 	// NAMESPACE::vector<int>::iterator vec_b = vec.begin();
 	// NAMESPACE::vector<int>::iterator vec_e = vec.end();
 	// NAMESPACE::vector<int>::reverse_iterator vec_rb = vec.rbegin();
@@ -74,7 +84,7 @@ int main() {
 	// tree_b->first = 53;
 	// --tree_e;
 	// --tree_re;
-	// --tree_re;
+	// ++tree_re;
 	// --vec_re;
 	// --vec_re;
 	// tree_rb++;
