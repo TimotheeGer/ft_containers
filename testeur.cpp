@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 14:21:48 by tigerber          #+#    #+#             */
-/*   Updated: 2022/06/02 15:26:35 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/02 16:47:57 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,8 +353,76 @@
             std::cout << C_YELLOW << "---------------------------Members functions-------------------" << C_RESET << std::endl << std::endl;
             
             std::cout << "std_stack empty = " << C_GREEN << std_stack.empty() << C_RESET << std::endl;
-            std::cout << "ft_stack empty = " << C_GREEN << ft_stack.empty() << C_RESET << std::endl;
-        }     
+            std::cout << "ft_stack empty = " << C_GREEN << ft_stack.empty() << C_RESET << std::endl << std::endl;
+
+            std::cout << "std_stack size = " << C_GREEN << std_stack.size() << C_RESET << std::endl;
+            std::cout << "ft_stack size = " << C_GREEN << ft_stack.size() << C_RESET << std::endl << std::endl;         
+
+            std::cout << "std_stack top = " << C_GREEN << std_stack.top() << C_RESET << std::endl;
+            std::cout << "ft_stack top = " << C_GREEN << ft_stack.top() << C_RESET << std::endl << std::endl;
+
+            std_stack.push(10);
+            std_stack.push(11);
+            ft_stack.push(10);
+            ft_stack.push(11);
+
+            std::cout << "std_stack push = " << C_GREEN << std_stack.top() << C_RESET << std::endl;
+            std::cout << "ft_stack push = " << C_GREEN << ft_stack.top() << C_RESET << std::endl << std::endl;
+
+            std_stack.pop();
+            std_stack.pop();
+            ft_stack.pop();
+            ft_stack.pop();
+
+            std::cout << "std_stack pop = " << C_GREEN << std_stack.top() << C_RESET << std::endl;
+            std::cout << "ft_stack pop = " << C_GREEN << ft_stack.top() << C_RESET << std::endl << std::endl;
+        }
+
+		/* ************************************************************************** */
+		/*                                                                            */
+        /*                              Test MAP :                                    */
+		/*                                                                            */
+		/* ************************************************************************** */
+
+		/* ************************************************************************** */
+		/*                                 Iterator:                                  */
+		/* ************************************************************************** */
+        
+        template <class T1, class T2>
+        void    ft_map_iterator(T1& std_map, T2& ft_map) {
+
+            std::map<int, int>::iterator std_itb = std_map.begin();
+            ft::map<int, int>::iterator ft_itb = ft_map.begin();
+            
+            std::cout << "std iterator begin first second = " << std::setw(10) << std_itb->first << " - " << std_itb->second << " | " 
+                      << "ft iterator begin first second  = " << C_GREEN << ft_itb->first << " - " << ft_itb->second << C_RESET << std::endl;  
+            
+            std::map<int, int>::iterator std_ite = std_map.end();
+            ft::map<int, int>::iterator ft_ite = ft_map.end();
+            
+            std::cout << "std iterator end first second   = " << std::setw(10) << std_ite->first << " - " << std_ite->second << " | " 
+                      << "ft iterator end first second    = " << C_GREEN << ft_ite->first << " - " << ft_ite->second << C_RESET << std::endl; 
+        
+            std::map<int, int>::reverse_iterator std_ritb = std_map.rbegin();
+            ft::map<int, int>::reverse_iterator ft_ritb = ft_map.rbegin();
+            
+            std::cout << "std reverse_iterator begin first second = " << std::setw(10) << std_ritb->first << " - " << std_ritb->second << " | " 
+                      << "ft reverse_iterator begin first second  = " << C_GREEN << ft_ritb->first << " - " << ft_ritb->second << C_RESET << std::endl;  
+            
+            std::map<int, int>::reverse_iterator std_rite = std_map.rend();
+            ft::map<int, int>::reverse_iterator ft_rite = ft_map.rend();
+            
+            std::cout << "std reverse_iterator end first second   = " << std::setw(10) << std_rite->first << " - " << std_rite->second << " | " 
+                      << "ft reverse_iterator end first second    = " << C_GREEN << ft_rite->first << " - " << ft_rite->second << C_RESET << std::endl;
+
+            std_itb++;       
+            ++std_itb;
+            ft_itb++;       
+            ++ft_itb;
+            
+                  
+        }
+         
 
 int main() {
 
@@ -390,6 +458,27 @@ int main() {
     }    
 
     ft_stack_members_fonction(std_stack, ft_stack);
+
+ 	std::cout << C_BLUE << "* ************************************************************************** *" << C_RESET << std::endl << std::endl;
+    std::cout << C_BLUE << "*                                 MAP                                        *" << C_RESET << std::endl << std::endl;
+    std::cout << C_BLUE << "* ************************************************************************** *" << C_RESET << std::endl << std::endl;  
+    
+    std::map<int, int> std_map;
+    ft::map<int, int>  ft_map;
+    
+    for (int i = 0; i < 10; i++)
+    {
+        std_map.insert(std::pair< int, int>(i, i + 40));
+        ft_map.insert(ft::pair< int, int>(i, i + 40));
+    }
+
+    ft_map.printTree();
+    std::cout << std::endl;
+    
+    ft_map_iterator(std_map, ft_map);
+    // ft_vec_capacity(std_map, ft_map);
+    // ft_vec_element_access(std_map, ft_map);
+    // ft_vec_modifier(std_map, ft_map);
     
     return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 15:28:45 by tigerber          #+#    #+#             */
-/*   Updated: 2022/06/01 15:30:35 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/02 18:23:03 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,11 +175,11 @@ namespace ft {
 		/*                                 Iterator:                                  */
 		/* ************************************************************************** */
 
-			iterator begin()						{ return iterator(minimum(root), TNULL, &root); };
-			const_iterator begin() const			{ return iterator(minimum(root), TNULL, &root); };
+			iterator begin()						{ return iterator(minimum(root), &TNULL, &root); };
+			const_iterator begin() const			{ return iterator(minimum(root), &TNULL, &root); };
 			
-			iterator end() 							{ return iterator(TNULL, TNULL, &root); };
-			const_iterator end() const				{ return iterator(TNULL, TNULL, &root); };
+			iterator end() 							{ return iterator(TNULL, &TNULL, &root); };
+			const_iterator end() const				{ return iterator(TNULL, &TNULL, &root); };
 			
 			reverse_iterator rbegin() 				{ return reverse_iterator(end()); };
 			const_reverse_iterator rbegin() const 	{ return const_reverse_iterator(end()); };
@@ -226,10 +226,11 @@ namespace ft {
 
 				if (exist == TNULL)
 				{
-					iterator tmp = iterator(insert_node(val), TNULL, &root);
+					
+					iterator tmp = iterator(insert_node(val), &TNULL, &root);
 					return ft::make_pair<iterator, bool>(tmp, true);
 				}
-				return ft::make_pair<iterator, bool>(iterator(exist, TNULL, &root), false);
+				return ft::make_pair<iterator, bool>(iterator(exist, &TNULL, &root), false);
 			};
 
 			// with hint (2)	
@@ -332,7 +333,7 @@ namespace ft {
 				NodePtr tmp = searchTreeKey(root, k);
 				
 				if (tmp != TNULL)
-					return (iterator(tmp));
+					return (iterator(tmp, &TNULL, &root));
 				else
 					return (end()); 
 			};
@@ -342,7 +343,7 @@ namespace ft {
 				NodePtr tmp = searchTreeKey(root, k);
 				
 				if (tmp != TNULL)
-					return (iterator(tmp));
+					return (iterator(tmp, &TNULL, &root));
 				else
 					return (end());
 			};
