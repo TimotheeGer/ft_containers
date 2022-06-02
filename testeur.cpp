@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 14:21:48 by tigerber          #+#    #+#             */
-/*   Updated: 2022/06/01 19:05:13 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/02 15:26:35 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@
 #include <map>
 #include <stack>
 #include <type_traits>
+#include "containers/color.hpp"
 #include "containers/vector.hpp"
 #include "containers/stack.hpp"
 #include "containers/map.hpp"
-#include "containers/color.hpp"
 
 		/* ************************************************************************** */
 		/*                                                                            */
@@ -333,10 +333,34 @@
             
             ft_printf_vec(std_vec2, ft_vec2, "std_vec2 = ", "ft_vec2 = ");
             ft_printf_vec(std_vec, ft_vec, "std_vec = ", "ft_vec = ");
-            
+            std::cout << std::endl;
+                     
         }
 
+		/* ************************************************************************** */
+		/*                                                                            */
+        /*                              Test Stack :                                  */
+		/*                                                                            */
+		/* ************************************************************************** */
+
+		/* ************************************************************************** */
+		/*                              Members functions :                           */
+		/* ************************************************************************** */
+
+        template <class T1, class T2>
+        void    ft_stack_members_fonction(T1& std_stack, T2& ft_stack) {
+            
+            std::cout << C_YELLOW << "---------------------------Members functions-------------------" << C_RESET << std::endl << std::endl;
+            
+            std::cout << "std_stack empty = " << C_GREEN << std_stack.empty() << C_RESET << std::endl;
+            std::cout << "ft_stack empty = " << C_GREEN << ft_stack.empty() << C_RESET << std::endl;
+        }     
+
 int main() {
+
+ 	std::cout << C_BLUE << "* ************************************************************************** *" << C_RESET << std::endl << std::endl;
+    std::cout << C_BLUE << "*                                 VECTOR                                     *" << C_RESET << std::endl << std::endl;
+    std::cout << C_BLUE << "* ************************************************************************** *" << C_RESET << std::endl << std::endl;
 
     std::vector<int> std_vec;
     ft::vector<int>  ft_vec;
@@ -352,6 +376,20 @@ int main() {
     ft_vec_element_access(std_vec, ft_vec);
     ft_vec_modifier(std_vec, ft_vec);
 
+ 	std::cout << C_BLUE << "* ************************************************************************** *" << C_RESET << std::endl << std::endl;
+    std::cout << C_BLUE << "*                                 STACK                                      *" << C_RESET << std::endl << std::endl;
+    std::cout << C_BLUE << "* ************************************************************************** *" << C_RESET << std::endl << std::endl;   
 
+    std::stack<int> std_stack;   
+    ft::stack<int>  ft_stack;   
+
+    for (int i = 0; i < 10; i++)
+    {
+        std_stack.push(i);
+        ft_stack.push(i);
+    }    
+
+    ft_stack_members_fonction(std_stack, ft_stack);
+    
     return 0;
 }
