@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 15:28:38 by tigerber          #+#    #+#             */
-/*   Updated: 2022/06/02 18:47:41 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/03 18:52:16 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,18 @@ namespace ft {
 		/* ************************************************************************** */
 			
 			template <typename T>
-			struct Node {
+			struct NodeStruct {
 
 				T pair;
-				Node *left;
-				Node *right;
-				Node *parent;
+				NodeStruct *left;
+				NodeStruct *right;
+				NodeStruct *parent;
+				NodeStruct **root;
+				NodeStruct **tNULL;
+				
 				int color;
 			};
-
+			
 		/* ************************************************************************** */
 		/*                          	Structur Check                                */
 		/* ************************************************************************** */
@@ -72,33 +75,31 @@ namespace ft {
 		
 		public:
 		
-			typedef map_iterator<key, T, _const> 											Self;
-    		typedef std::pair<key, T>													value_type;
-			typedef ptrdiff_t																difference_type;
-			typedef std::bidirectional_iterator_tag 										iterator_category;
-			typedef typename check_const_map<_const, const value_type&, value_type&>::type	reference;
-			typedef typename check_const_map<_const, const value_type*, value_type*>::type	pointer;
-			// typedef Node<value_type>														Node;
-			typedef typename check_const_map<_const, const Node<value_type>*, Node<value_type>* >::type	NodePtr;
+			typedef map_iterator<key, T, _const> 																		Self;
+    		typedef ft::pair<const key, T>																				value_type;
+			typedef ptrdiff_t																							difference_type;
+			typedef std::bidirectional_iterator_tag 																	iterator_category;
+			typedef typename check_const_map<_const, const value_type&, value_type&>::type								reference;
+			typedef typename check_const_map<_const, const value_type*, value_type*>::type								pointer;
+			typedef typename check_const_map<_const, const NodeStruct<value_type>*, NodeStruct<value_type>* >::type		NodePtr;
+
 		
 		/* ************************************************************************** */
 		/*                                Atribues                                    */
 		/* ************************************************************************** */
 
 			NodePtr		_pNode;
-			NodePtr*	_root;
-			NodePtr*	tNULL;
 
 		/* ************************************************************************** */
 		/*                               Constructor:                                 */
 		/* ************************************************************************** */
 		
-			map_iterator(void) : _pNode(NULL), _root(NULL), tNULL(NULL) {};
+			map_iterator(void) : _pNode(NULL){};
 		
-			map_iterator(NodePtr n, const NodePtr* TNULL, const NodePtr* root) :_pNode(n), _root(root), tNULL(TNULL) { };
+			map_iterator(NodePtr n) :_pNode(n) {};
 
-			map_iterator(const map_iterator<key, T, false> &copy) : _pNode(copy._pNode), _root(copy._root), tNULL(copy.tNULL) {};
-			map_iterator(const map_iterator<key, T, true> &copy) : _pNode(copy._pNode), _root(copy._root), tNULL(copy.tNULL) {};
+			map_iterator(const map_iterator<key, T, false> &copy) : _pNode(copy._pNode) {};
+			map_iterator(const map_iterator<key, T, true> &copy) : _pNode(copy._pNode) {};
 		
 			virtual ~map_iterator() {};
 			
@@ -107,8 +108,6 @@ namespace ft {
 				if (&rhs != this)
 				{
 					_pNode = rhs._pNode;
-					_root = rhs._root;
-					tNULL = rhs.tNULL;
 				}
 				return *this;
 			};
@@ -123,8 +122,8 @@ namespace ft {
 
 			Self& operator++() {
 
-				if (_pNode == maximum(*_root))
-					_pNode = *tNULL;
+				if (_pNode == maximum(*_pNode->root))
+					_pNode = *_pNode->tNULL;
 				else
 					_pNode = successor(_pNode);
 				return *this;
@@ -134,8 +133,8 @@ namespace ft {
 
 				map_iterator res(*this);
 
-				if (_pNode == maximum(*_root))
-					_pNode = *tNULL;
+				if (_pNode == maximum(*_pNode->root))
+					_pNode = *_pNode->tNULL;
 				else
 					_pNode = successor(_pNode);
 				return res;
@@ -143,10 +142,10 @@ namespace ft {
 			
 			Self& operator--() {
 				
-				if (_pNode == minimum(*_root))
-					_pNode = *tNULL;
-				else if (_pNode == *tNULL)
-					_pNode = maximum(*_root);
+				if (_pNode == minimum(*_pNode->root))
+					_pNode = *_pNode->tNULL;
+				else if (_pNode == *_pNode->tNULL)
+					_pNode = maximum(*_pNode->root);
 				else
 					_pNode = predecessor(_pNode);
 				return *this;
@@ -156,24 +155,24 @@ namespace ft {
 
 				map_iterator res(*this);
 				
-				if (_pNode == minimum(*_root))
-					_pNode = *tNULL;
-				else if (_pNode == *tNULL)
-					_pNode = maximum(*_root);
+				if (_pNode == minimum(*_pNode->root))
+					_pNode = *_pNode->tNULL;
+				else if (_pNode == *_pNode->tNULL)
+					_pNode = maximum(*_pNode->root);
 				else
 					_pNode = predecessor(_pNode);
 				return res;
 			}
 			
 			template <typename T1>
-			bool operator==(const T1& s) {
+			bool operator==(const T1& s) const {
 
 				return _pNode == s._pNode;
 			}
 
 			
-			// template <typename T1>
-			bool operator!=(const Self& s) {
+			template <typename T1>
+			bool operator!=(const T1& s) const {
 				
 				return _pNode != s._pNode;
 			}
@@ -183,26 +182,26 @@ namespace ft {
 		/* ************************************************************************** */
 
 			NodePtr minimum(NodePtr node) {
-				
-				while (node->left != *tNULL)
+								
+				while (node->left != *_pNode->tNULL)
 					node = node->left;
 				return node;
 			}
 
 			NodePtr maximum(NodePtr node) {
 
-				while (node->right != *tNULL)
+				while (node->right != *_pNode->tNULL)
 					node = node->right;
 				return node;
 			}
 
 			NodePtr successor(NodePtr x) {
-				
-				if (x->right != *tNULL)
+								
+				if (x->right != *_pNode->tNULL)
 					return minimum(x->right);
 
 				NodePtr y = x->parent;
-				while (y != *tNULL && x == y->right)
+				while (y != *_pNode->tNULL && x == y->right)
 				{
 					x = y;
 					y = y->parent;
@@ -211,12 +210,12 @@ namespace ft {
 			}
 
 			NodePtr predecessor(NodePtr x) {
-
-				if (x->left != *tNULL)
+								
+				if (x->left != *_pNode->tNULL)
 					return maximum(x->left);
 
 				NodePtr y = x->parent;
-				while (y != *tNULL && x == y->left)
+				while (y != *_pNode->tNULL && x == y->left)
 				{
 					x = y;
 					y = y->parent;

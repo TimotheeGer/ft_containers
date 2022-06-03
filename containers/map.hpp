@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 15:28:45 by tigerber          #+#    #+#             */
-/*   Updated: 2022/06/02 18:23:03 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/03 18:34:23 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 
 namespace ft {
 
-	template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<Key, T> > >
+	template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
 	class map {
 
 		/* ************************************************************************** */
@@ -41,7 +41,7 @@ namespace ft {
 			
 			typedef Key 											key_type;
 			typedef T												mapped_type;
-			typedef ft::pair<key_type, mapped_type> 				value_type;
+			typedef ft::pair<const key_type, mapped_type> 			value_type;
 			typedef Compare 										key_compare;
 			typedef Alloc											allocator_type;
 
@@ -52,8 +52,8 @@ namespace ft {
 
 			typedef ptrdiff_t										difference_type;
     		typedef size_t											size_type;
-			typedef Node<value_type>								Node;
-			typedef Node*											NodePtr;
+			typedef NodeStruct<value_type>							Node;
+			typedef NodeStruct<value_type>*							NodePtr;
     		
 			typedef ft::map_iterator<key_type, mapped_type, false>	iterator;
     		typedef ft::map_iterator<key_type, mapped_type, true>	const_iterator;
@@ -117,7 +117,9 @@ namespace ft {
 				TNULL->left = NULL;
 				TNULL->right = NULL;
 				TNULL->parent = TNULL;
-				_alloc.construct(&TNULL->pair, ft::pair<key_type, mapped_type>(_size, 0));
+				TNULL->root = &root;
+				TNULL->tNULL = &TNULL;
+				// _alloc.construct(&TNULL->pair, ft::pair<key_type, mapped_type>(_size, 0));
 				root = TNULL;
 				// _alloc.construct(&root->pair, value_type());
 			
@@ -138,6 +140,8 @@ namespace ft {
 				TNULL->left = NULL;
 				TNULL->right = NULL;
 				TNULL->parent = TNULL;
+				TNULL->root = &root;
+				TNULL->tNULL = &TNULL;
 				root = TNULL;
 				_alloc.construct(&root->pair, value_type());
 
@@ -175,11 +179,11 @@ namespace ft {
 		/*                                 Iterator:                                  */
 		/* ************************************************************************** */
 
-			iterator begin()						{ return iterator(minimum(root), &TNULL, &root); };
-			const_iterator begin() const			{ return iterator(minimum(root), &TNULL, &root); };
+			iterator begin()						{ return iterator(minimum(root)); };
+			const_iterator begin() const			{ return iterator(minimum(root)); };
 			
-			iterator end() 							{ return iterator(TNULL, &TNULL, &root); };
-			const_iterator end() const				{ return iterator(TNULL, &TNULL, &root); };
+			iterator end() 							{ return iterator(TNULL); };
+			const_iterator end() const				{ return iterator(TNULL); };
 			
 			reverse_iterator rbegin() 				{ return reverse_iterator(end()); };
 			const_reverse_iterator rbegin() const 	{ return const_reverse_iterator(end()); };
@@ -226,11 +230,10 @@ namespace ft {
 
 				if (exist == TNULL)
 				{
-					
-					iterator tmp = iterator(insert_node(val), &TNULL, &root);
+					iterator tmp = iterator(insert_node(val));
 					return ft::make_pair<iterator, bool>(tmp, true);
 				}
-				return ft::make_pair<iterator, bool>(iterator(exist, &TNULL, &root), false);
+				return ft::make_pair<iterator, bool>(iterator(exist), false);
 			};
 
 			// with hint (2)	
@@ -242,7 +245,7 @@ namespace ft {
 
 			// range (3)	
 			template <class InputIterator>
-			  void insert (InputIterator first, InputIterator last) {
+			  void insert (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0) {
 
 				  while (first != last)
 				  {
@@ -250,7 +253,6 @@ namespace ft {
 					  ++first;
 				  }
 			  };
-
 
 			// (1)	
 			void erase (iterator position) {
@@ -333,7 +335,7 @@ namespace ft {
 				NodePtr tmp = searchTreeKey(root, k);
 				
 				if (tmp != TNULL)
-					return (iterator(tmp, &TNULL, &root));
+					return (iterator(tmp));
 				else
 					return (end()); 
 			};
@@ -343,7 +345,7 @@ namespace ft {
 				NodePtr tmp = searchTreeKey(root, k);
 				
 				if (tmp != TNULL)
-					return (iterator(tmp, &TNULL, &root));
+					return (iterator(tmp));
 				else
 					return (end());
 			};
@@ -434,7 +436,7 @@ namespace ft {
 		/*                           		  Utils:                                  */
 		/* ************************************************************************** */
 		
-		private:
+		// private:
 		
 		/* ************************************************************************** */
 		/*                           		 get/set:                                 */
@@ -546,9 +548,10 @@ namespace ft {
 				node->parent = NULL;
 				node->left = TNULL;
 				node->right = TNULL;
+				node->tNULL = &TNULL;
 				_alloc.construct(&node->pair, val);
 				_alloc.destroy(&TNULL->pair);
-				_alloc.construct(&TNULL->pair, ft::pair<key_type, mapped_type>(_size + 1, 0));
+				// _alloc.construct(&TNULL->pair, ft::pair<key_type, mapped_type>(_size + 1, 0));
 
 				_size++;
 
@@ -573,11 +576,12 @@ namespace ft {
 				else 
 					y->right = node; 
 
-				if (node->parent == NULL) { node->color = 0; return node; }
+				if (node->parent == NULL) { node->root = &root; node->color = 0; return node; }
 
-				if (node->parent->parent == NULL) { return node; }
+				if (node->parent->parent == NULL) { node->root = &root; return node; }
     			
 				insertFix(node);
+				node->root = &root;
 				return node;
 			};
 
@@ -740,7 +744,7 @@ namespace ft {
 		/*                           		 Min/Max:                                 */
 		/* ************************************************************************** */
 		
-			NodePtr minimum(NodePtr node) {
+			NodePtr minimum(NodePtr node) const {
     			
 				while (node->left != TNULL)
     			  node = node->left;
@@ -763,7 +767,7 @@ namespace ft {
 		/*                           		 search:                                  */
 		/* ************************************************************************** */
 
-			NodePtr searchTreeKey(NodePtr node, const key_type& key) {
+			NodePtr searchTreeKey(NodePtr node, const key_type& key) const {
     
 				if (node == TNULL || key == node->pair.first)
       				return node;

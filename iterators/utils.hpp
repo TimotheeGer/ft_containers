@@ -48,22 +48,22 @@ namespace ft {
 		/*                       Non-member function overloads                        */
 		/* ************************************************************************** */
 
-			friend  bool operator== (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return lhs.first==rhs.first && lhs.second==rhs.second; };
+			friend  bool operator == (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return lhs.first == rhs.first && lhs.second == rhs.second; };
 
 			
-			friend  bool operator!= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return !(lhs==rhs); };
+			friend  bool operator != (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return !(lhs == rhs); };
 
 			
-			friend  bool operator<  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return lhs.first<rhs.first || (!(rhs.first<lhs.first) && lhs.second<rhs.second); };
+			friend  bool operator < (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return lhs.first < rhs.first || (!(rhs.first < lhs.first) && lhs.second < rhs.second); };
 
 			
-			friend  bool operator<= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return !(rhs<lhs); };
+			friend  bool operator <= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return !(rhs < lhs); };
 
 			
-			friend  bool operator>  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return rhs<lhs; };
+			friend  bool operator > (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return rhs < lhs; };
 		
 			
-			friend bool operator>= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return !(lhs<rhs); };
+			friend bool operator >= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return !(lhs < rhs); };
 
 	};
 
