@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 15:28:45 by tigerber          #+#    #+#             */
-/*   Updated: 2022/06/03 18:34:23 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/06 18:49:31 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ namespace ft {
 				TNULL->tNULL = &TNULL;
 				// _alloc.construct(&TNULL->pair, ft::pair<key_type, mapped_type>(_size, 0));
 				root = TNULL;
-				// _alloc.construct(&root->pair, value_type());
+				_alloc.construct(&root->pair, value_type());
 			
 			}
 
@@ -149,29 +149,62 @@ namespace ft {
 			};
 			
 			// copy (3)	
-			map (const map& x) {
+			map (const map& x) : _alloc(x._alloc), _size(x._size), _comp(x._comp) {
 				
-				_alloc = x._alloc;
-				_comp = x._comp;
-
+				TNULL = alloc_node.allocate(1);
+				TNULL->color = BLACK;
+				TNULL->left = NULL;
+				TNULL->right = NULL;
+				TNULL->parent = TNULL;
+				TNULL->root = &root;
+				TNULL->tNULL = &TNULL;
+				root = TNULL;
+				_alloc.construct(&root->pair, value_type());
+				
 				insert(x.begin(), x.end());
 			};
 
 			// copy (1)	
-			map& operator= (const map& x) {
+			map& operator = (const map& x) {
 
-				if (this == &x)
-					return (*this);
-				clear();
+
+				if (this != &x)
+				{
+					// if (root)
+					// 	deallocate_node(root);
+					// root = x.root;
+					// TNULL = x.TNULL;
+					_alloc = x._alloc;
+					_size = x._size;
+					_comp = x._comp;
+				}
+				// clear();
 				insert(x.begin(), x.end());
+				// std::cout << "TEST 1" << std::endl;
 				return (*this);
 			};
 
 			// Destructor(1)
 			~map() {
+
+				// std::cout << "-------------------------------------------------" << std::endl;
+				// std::cout << "GO DESTRUCTOR" << " - " << get_root() << std::endl;
+				
+				if (root == TNULL)
+				{
+					// std::cout << "TEST DESTRUC 1 size = " << _size << std::endl;
+					_size = 0;
+					deallocate_node(TNULL);
+					return ;
+				}
 				
 				if (_size > 0)
+				{
+					
+					// std::cout << "TEST DESTRUC 2 size = " << _size << std::endl;
 					clear();
+				}
+				_size = 0;
 				deallocate_node(TNULL);
 			};
 
@@ -200,7 +233,8 @@ namespace ft {
 
 			size_type	size() const { return _size; };
 
-			size_type max_size() const { return _alloc.max_size(); };
+			// size_type max_size() const { return _alloc.max_size(); };
+			size_type max_size() const { return 230584300921369395; };
 
 		/* ************************************************************************** */
 		/*                            	 Element Access:                              */
@@ -276,6 +310,7 @@ namespace ft {
 			// (3)	
 			void erase (iterator first, iterator last) {
 
+				// std::cout << "ERASE TEST" << std::endl;
 				iterator	tmp;
 
 				while (first != last)
@@ -301,12 +336,36 @@ namespace ft {
 				set_size(tmp_size);
 				_alloc = tmp_alloc;
 				_comp = tmp_comp;
+				// ft::swap(_comp, x._comp);
+				// ft::swap(_alloc, x._alloc);
+				// ft::swap(TNULL, x.TNULL);
+				// ft::swap(root, x.root);
+				
 			};
 
 			void clear() {
 
-				erase(begin(), end());
+				
+				// std::cout << "CLEAR" << std::endl;
+				// erase(begin(), end());
+				delete_tree(root);
+				// std::cout << "SIZE IN CLEAR = " << _size << std::endl;
+				root = TNULL;
+				_size = 0;
+				// std::cout << "C_FIN" << std::endl;
+				
 			};
+
+			void	delete_tree( NodePtr p )
+			{
+				if (p != TNULL)
+				{
+					delete_tree(p->left);
+					delete_tree(p->right);
+					deallocate_node(p);
+					_size--;
+				}
+			}
 
 		/* ************************************************************************** */
 		/*                             		Observers:                                */
@@ -430,7 +489,7 @@ namespace ft {
 
 				return allocator_type();
 			};
-		
+
 		
 		/* ************************************************************************** */
 		/*                           		  Utils:                                  */
@@ -443,6 +502,7 @@ namespace ft {
 		/* ************************************************************************** */
 		
 			NodePtr		get_root() const { return root; };
+			NodePtr		get_tnull() const { return TNULL; };
 			size_type	get_size() const { return size(); };
 
 			void		set_root(NodePtr p_root) { root = p_root; };
@@ -550,7 +610,7 @@ namespace ft {
 				node->right = TNULL;
 				node->tNULL = &TNULL;
 				_alloc.construct(&node->pair, val);
-				_alloc.destroy(&TNULL->pair);
+				// _alloc.destroy(&TNULL->pair);
 				// _alloc.construct(&TNULL->pair, ft::pair<key_type, mapped_type>(_size + 1, 0));
 
 				_size++;
@@ -746,13 +806,17 @@ namespace ft {
 		
 			NodePtr minimum(NodePtr node) const {
     			
+				if (node == TNULL)
+					return node;
 				while (node->left != TNULL)
-    			  node = node->left;
+    				node = node->left;
     			return node;
   			}
 
 			NodePtr maximum(NodePtr node) {
-   				
+				
+   				if (node == TNULL)
+					return node;
 				while (node->right != TNULL)
       				node = node->right;
     			return node;
@@ -811,6 +875,45 @@ namespace ft {
 				if (root) { printHelper(this->root, "", true); }
   			}		
 	};
+
+		/* ************************************************************************** */
+		/*                       Non-member function overloads                        */
+		/* ************************************************************************** */
+		
+		template< class Key, class T, class Compare, class Alloc >
+		void swap( ft::map<Key,T,Compare,Alloc>& lhs, ft::map<Key,T,Compare,Alloc>& rhs ) { lhs.swap(rhs); }
+
+		template< class Key, class T, class Compare, class Alloc >
+		bool operator == ( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {
+			
+			typename ft::map<Key,T,Compare,Alloc>::const_iterator first = rhs.begin();
+			typename ft::map<Key,T,Compare,Alloc>::const_iterator last = rhs.end();
+			typename ft::map<Key,T,Compare,Alloc>::const_iterator cursor = lhs.begin();
+
+			if (lhs.size() != rhs.size())
+				return (false);
+			return (ft::equal(lhs.begin(),lhs.end(),rhs.begin()));
+		}
+
+		template< class Key, class T, class Compare, class Alloc >
+		bool operator!=( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) { return (!(lhs == rhs)); }
+
+		template< class Key, class T, class Compare, class Alloc >
+		bool operator<( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {
+			
+			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+		}
+
+		template< class Key, class T, class Compare, class Alloc >
+		bool operator<=( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) { return (!(rhs < lhs)); }
+
+		template< class Key, class T, class Compare, class Alloc >
+		bool operator>( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) { return (rhs < lhs); }
+	
+		template< class Key, class T, class Compare, class Alloc >
+		bool operator>=( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) { return (!(rhs > lhs)); }
+
+
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 14:21:48 by tigerber          #+#    #+#             */
-/*   Updated: 2022/06/02 16:47:57 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/06 18:10:18 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -465,6 +465,13 @@ int main() {
     
     std::map<int, int> std_map;
     ft::map<int, int>  ft_map;
+    ft::map<int, int>  ft_map_cpy;
+
+    ft_map_cpy.clear();
+    std::cout << "****TEST IT****" << std::endl;
+    ft::map<int, int>::iterator ft_itb = ft_map_cpy.begin();
+    std::cout << "ft_map = " << ft_map.get_root() << std::endl;
+    std::cout << "ft_itb_test = " << ft_itb->first << " - " << ft_itb->second << " | " << ft_map_cpy.get_root() << std::endl;
     
     for (int i = 0; i < 10; i++)
     {
@@ -476,6 +483,17 @@ int main() {
     std::cout << std::endl;
     
     ft_map_iterator(std_map, ft_map);
+
+    std::cout << "****1***" << std::endl;
+    ft_map_cpy = ft_map;
+    ft_map.clear();
+    std::cout << "ft_map2           = " << ft_map.get_tnull() << std::endl;
+    std::cout << "ft_map2 root      = " << ft_map.get_root() << std::endl;
+    std::cout << "ft_map_cpy        = " <<  ft_map_cpy.get_tnull() << std::endl;
+    std::cout << "ft_map_cpy root   = " <<  ft_map_cpy.get_root() << std::endl;
+    std::cout << "****PRINT ft_map_cpy****" << std::endl;
+    ft_map_cpy.printTree();
+    std::cout << "FIN" << std::endl;
     // ft_vec_capacity(std_map, ft_map);
     // ft_vec_element_access(std_map, ft_map);
     // ft_vec_modifier(std_map, ft_map);
