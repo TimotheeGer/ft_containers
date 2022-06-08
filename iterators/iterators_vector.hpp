@@ -42,7 +42,7 @@ namespace ft {
 			typedef typename check_const<_const, const T&, T&>::type	reference;
 			typedef typename check_const<_const, const T*, T*>::type	pointer;
 			typedef size_t												size_type;
-    		typedef std::bidirectional_iterator_tag 					iterator_category;
+    		typedef std::random_access_iterator_tag 					iterator_category;
 
 
 			Iterator_vector<T, _const>() : m_ptr(NULL) {};
@@ -79,13 +79,20 @@ namespace ft {
 			reference operator*() const { return *m_ptr; };
 			pointer operator->() const { return m_ptr; };
 
-			friend Iterator_vector<T, _const> operator+(int nb, Iterator_vector<T, _const> it) { return (it += nb); }
-
-			friend Iterator_vector<T, _const> operator-(int nb, Iterator_vector<T, _const> it) { return (it -= nb); }
 			
 			pointer m_ptr;
 	
 	};
+
+		/* ************************************************************************** */
+		/*                       Non-member function overloads                        */
+		/* ************************************************************************** */
+		
+			template<typename T, bool _const>
+			Iterator_vector<T, _const> operator+(int nb, Iterator_vector<T, _const> it) { return (it += nb); }
+			
+			template<typename T, bool _const>
+			Iterator_vector<T, _const> operator-(int nb, Iterator_vector<T, _const> it) { return (it -= nb); }
 }
 
 #endif

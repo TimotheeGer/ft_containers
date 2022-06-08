@@ -11,12 +11,13 @@ namespace ft {
 
 	template< class T1, class T2 >
 	struct pair {
-
-		public:
 		
+		public:
+
 		/* ************************************************************************** */
 		/*                          Member type Definition                            */
 		/* ************************************************************************** */
+			
 			typedef T1					first_type;
 			typedef T2					second_type;
 
@@ -27,7 +28,7 @@ namespace ft {
 		/*                               Constructor:                                 */
 		/* ************************************************************************** */
 		
-			pair() : first(T1()), second(T2()) {};
+			pair() : first(T1()), second(T2()) { };
 
 			template<class U, class V> 
 			pair (const pair<U,V> & pr) : first(pr.first), second(pr.second) { };
@@ -43,6 +44,8 @@ namespace ft {
 				}
 				return (*this);
 			};
+
+			~pair() {};
 
 		/* ************************************************************************** */
 		/*                       Non-member function overloads                        */
@@ -200,7 +203,6 @@ namespace ft {
 		typedef std::random_access_iterator_tag			iterator_category;
 	};
 
-	// struct bidirectional_iterator_tag {};
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 14:21:48 by tigerber          #+#    #+#             */
-/*   Updated: 2022/06/06 18:10:18 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/08 20:44:24 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,15 @@
 #include <cstddef>
 #include <vector>
 #include <map>
+#include <set>
 #include <stack>
 #include <type_traits>
 #include "containers/color.hpp"
 #include "containers/vector.hpp"
 #include "containers/stack.hpp"
 #include "containers/map.hpp"
+#include "containers/set.hpp"
+// #include "iterators/utils.hpp"
 
 		/* ************************************************************************** */
 		/*                                                                            */
@@ -37,6 +40,8 @@
         template <class T1, class T2>
         void    ft_printf_vec(T1& std_vec, T2& ft_vec, std::string std_str, std::string ft_str) {
             
+            std::cout << C_BOLDRED << "------ print vec ------" << C_RESET << std::endl;
+           
             std::vector<int>::iterator std_itb = std_vec.begin();
             std::vector<int>::iterator std_ite = std_vec.end();
             
@@ -46,8 +51,65 @@
             while (std_itb != std_ite)
                 std::cout << std_str << std::setw(5) << *std_itb++ << " | " << ft_str << C_GREEN << *ft_itb++ << C_RESET << std::endl;            
             std::cout << std::endl;
+            
+            std::cout << " std size = " << C_GREEN << std_vec.size() << C_RESET << std::endl;
+            std::cout << " ft size = " << C_GREEN << ft_vec.size() << C_RESET << std::endl; 
+            
+            std::cout << std::endl;
+        }
 
-        }    
+        template <class T1, class T2>
+        void    ft_printf_map(T1& std_vec, T2& ft_vec, std::string std_str, std::string ft_str) {
+            
+            std::cout << C_BOLDRED << "------ print map ------" << C_RESET << std::endl;
+           
+            std::map<int, int>::iterator std_itb = std_vec.begin();
+            std::map<int, int>::iterator std_ite = std_vec.end();
+            
+            ft::map<int, int>::iterator ft_itb = ft_vec.begin();
+            ft::map<int, int>::iterator ft_ite = ft_vec.end();
+            
+            while (std_itb != std_ite)
+            {
+                std::cout << std_str << std_itb->first << " - " << std_itb->second << " | " 
+                            << ft_str << C_GREEN << ft_itb->first  << C_RESET << " - " << C_GREEN << ft_itb->second << C_RESET << std::endl;            
+                std_itb++;
+                ft_itb++;
+            }
+            std::cout << std::endl;
+            
+            std::cout << " std size = " << C_GREEN << std_vec.size() << C_RESET << std::endl;
+            std::cout << " ft size = " << C_GREEN << ft_vec.size() << C_RESET << std::endl; 
+            
+            std::cout << std::endl;
+        }  
+
+        template <class T1, class T2>
+        void    ft_printf_set(T1& std_vec, T2& ft_vec, std::string std_str, std::string ft_str) {
+            
+            std::cout << C_BOLDRED << "------ print set ------" << C_RESET << std::endl;
+           
+            std::set<int>::iterator std_itb = std_vec.begin();
+            std::set<int>::iterator std_ite = std_vec.end();
+            
+            ft::set<int>::iterator ft_itb = ft_vec.begin();
+            ft::set<int>::iterator ft_ite = ft_vec.end();
+            
+            while (std_itb != std_ite)
+            {
+                std::cout << std_str << *std_itb << " | " 
+                            << ft_str << C_GREEN << *ft_itb  << C_RESET << std::endl;            
+                std_itb++;
+                ft_itb++;
+            }
+            std::cout << std::endl;
+            
+            std::cout << " std size = " << C_GREEN << std_vec.size() << C_RESET << std::endl;
+            std::cout << " ft size = " << C_GREEN << ft_vec.size() << C_RESET << std::endl; 
+            
+            std::cout << std::endl;
+
+        }  
 
         template <class T1, class T2>
         void    ft_vec_iterator(T1& std_vec, T2& ft_vec) {
@@ -391,6 +453,8 @@
         template <class T1, class T2>
         void    ft_map_iterator(T1& std_map, T2& ft_map) {
 
+            std::cout << C_YELLOW << "---------------------------Iterator-------------------" << C_RESET << std::endl << std::endl;
+            
             std::map<int, int>::iterator std_itb = std_map.begin();
             ft::map<int, int>::iterator ft_itb = ft_map.begin();
             
@@ -400,6 +464,9 @@
             std::map<int, int>::iterator std_ite = std_map.end();
             ft::map<int, int>::iterator ft_ite = ft_map.end();
             
+            std_ite--;
+            ft_ite--;
+           
             std::cout << "std iterator end first second   = " << std::setw(10) << std_ite->first << " - " << std_ite->second << " | " 
                       << "ft iterator end first second    = " << C_GREEN << ft_ite->first << " - " << ft_ite->second << C_RESET << std::endl; 
         
@@ -411,18 +478,485 @@
             
             std::map<int, int>::reverse_iterator std_rite = std_map.rend();
             ft::map<int, int>::reverse_iterator ft_rite = ft_map.rend();
-            
+
+            std_rite--;
+            ft_rite--;
+
             std::cout << "std reverse_iterator end first second   = " << std::setw(10) << std_rite->first << " - " << std_rite->second << " | " 
-                      << "ft reverse_iterator end first second    = " << C_GREEN << ft_rite->first << " - " << ft_rite->second << C_RESET << std::endl;
+                      << "ft reverse_iterator end first second    = " << C_GREEN << ft_rite->first << " - " << ft_rite->second << C_RESET << std::endl << std::endl;
 
             std_itb++;       
             ++std_itb;
             ft_itb++;       
             ++ft_itb;
+
+            std_ritb++;       
+            ++std_ritb;
+            ft_ritb++;       
+            ++ft_ritb;
             
+            std::cout << "after++ std iterator begin first second = " << std::setw(10) << std_itb->first << " - " << std_itb->second << " | " 
+                      << "after++ ft iterator begin first second  = " << C_GREEN << ft_itb->first << " - " << ft_itb->second << C_RESET << std::endl;  
+            
+            std::cout << "after++ std iterator end first second   = " << std::setw(10) << std_ite->first << " - " << std_ite->second << " | " 
+                      << "after++ ft iterator end first second    = " << C_GREEN << ft_ite->first << " - " << ft_ite->second << C_RESET << std::endl; 
+            
+            std::cout << "after++ std reverse_iterator begin first second = " << std::setw(10) << std_ritb->first << " - " << std_ritb->second << " | " 
+                      << "after++ ft reverse_iterator begin first second  = " << C_GREEN << ft_ritb->first << " - " << ft_ritb->second << C_RESET << std::endl;
+            
+            std::cout << "after++ std reverse_iterator end first second   = " << std::setw(10) << std_rite->first << " - " << std_rite->second << " | " 
+                      << "after++ ft reverse_iterator end first second    = " << C_GREEN << ft_rite->first << " - " << ft_rite->second << C_RESET << std::endl << std::endl;           
                   
         }
-         
+		
+        /* ************************************************************************** */
+		/*                                 Capacity:                                  */
+		/* ************************************************************************** */
+        
+        template <class T1, class T2>
+        void    ft_map_capacity(T1& std_map, T2& ft_map) {
+            
+            std::cout << C_YELLOW << "---------------------------Capacity-------------------" << C_RESET << std::endl << std::endl;
+            
+            std::cout << "std empty = " << std_map.empty()  << " | " 
+                      << "ft empty = " << C_GREEN << ft_map.empty() << C_RESET << std::endl << std::endl;
+                      
+            std::cout << "std size = " << std_map.size()  << " | " 
+                      << "ft size = " << C_GREEN << ft_map.size() << C_RESET << std::endl << std::endl;
+
+            std::cout << "std max_size = " << std_map.max_size()  << " | " 
+                      << "ft max_size = " << C_GREEN << ft_map.max_size() << C_RESET << std::endl << std::endl;
+        }
+
+        /* ************************************************************************** */
+		/*                            	 Element Access:                              */
+		/* ************************************************************************** */
+        
+        template <class T1, class T2>
+        void    ft_map_element_access(T1& std_map, T2& ft_map) {
+
+            std::cout << C_YELLOW << "---------------------------Element Access-------------------" << C_RESET << std::endl << std::endl;
+            
+            std::cout << "std Element Access [3] = " << std_map[3]  << " | " 
+                      << "ft Element Access [3]= " << C_GREEN << ft_map[3] << C_RESET << std::endl << std::endl; 
+
+            std::cout << "std Element Access [6] = " << std_map[6]  << " | " 
+                      << "ft Element Access [6]= " << C_GREEN << ft_map[6] << C_RESET << std::endl << std::endl;
+
+            std::cout << "std Element Access [9] = " << std_map[9]  << " | " 
+                      << "ft Element Access [9]= " << C_GREEN << ft_map[9] << C_RESET << std::endl << std::endl;           
+        }   
+
+		/* ************************************************************************** */
+		/*                            		 Modifiers:                               */
+		/* ************************************************************************** */
+
+        template <class T1, class T2>
+        void    ft_map_modifiers(T1& std_map, T2& ft_map) {
+
+            std::cout << C_YELLOW << "---------------------------Modifiers-------------------" << C_RESET << std::endl << std::endl;
+            
+            ft_printf_map(std_map, ft_map, " std_map ", " ft_map ");
+            
+            std::cout << "std insert single (3) = " << std_map.insert(std::pair< int, int>(3, 43)).second  << " | " 
+                      << "ft insert single (3) = " << C_GREEN << ft_map.insert(ft::pair< int, int>(3, 43)).second << C_RESET << std::endl << std::endl; 
+
+            std::cout << "std insert single (15) = " << std_map.insert(std::pair< int, int>(15, 55)).second  << " | " 
+                      << "ft insert single (15) = " << C_GREEN << ft_map.insert(ft::pair< int, int>(15, 55)).second << C_RESET << std::endl << std::endl;
+
+            std::cout << "std insert single (15) = " << std_map.insert(std::pair< int, int>(15, 55)).second  << " | " 
+                      << "ft insert single (15) = " << C_GREEN << ft_map.insert(ft::pair< int, int>(15, 55)).second << C_RESET << std::endl << std::endl;            
+            
+            ft_printf_map(std_map, ft_map, " std_map ", " ft_map ");
+
+            std::cout << "std insert hint (16) = " << std_map.insert(std_map.begin(), std::pair< int, int>(16, 56))->first  << " | " 
+                      << "ft insert hint (16) = " << C_GREEN << ft_map.insert(ft_map.begin(), ft::pair< int, int>(16, 56))->first << C_RESET << std::endl << std::endl; 
+
+            std::cout << "std insert hint (17) = " << std_map.insert(std_map.begin(), std::pair< int, int>(17, 57))->first  << " | " 
+                      << "ft insert hint (17) = " << C_GREEN << ft_map.insert(ft_map.begin(), ft::pair< int, int>(17, 57))->first << C_RESET << std::endl << std::endl;
+
+            std::cout << "std insert hint (18) = " << std_map.insert(std_map.begin(), std::pair< int, int>(18, 58))->first  << " | " 
+                      << "ft insert hint (18) = " << C_GREEN << ft_map.insert(ft_map.begin(), ft::pair< int, int>(18, 58))->first << C_RESET << std::endl << std::endl;             
+
+            ft_printf_map(std_map, ft_map, " std_map ", " ft_map ");
+
+            std::map<int, int> std_map2;
+            ft::map<int, int>  ft_map2;
+            
+            for (int i = 30; i < 40; i++)
+            {
+                std_map2.insert(std::pair< int, int>(i, i + 40));
+                ft_map2.insert(ft::pair< int, int>(i, i + 40));
+            }
+
+            std::cout << C_BOLDMAGENTA << "insert range InputIterator" << C_RESET << std::endl << std::endl;
+            
+            std_map.insert(std_map2.begin(), std_map2.end());
+            ft_map.insert(ft_map2.begin(), ft_map2.end());
+
+            ft_printf_map(std_map, ft_map, " std_map ", " ft_map ");
+            
+            std::cout << C_BOLDMAGENTA << "erase Iterator" << C_RESET << std::endl << std::endl;
+
+            std_map.erase(std_map.begin());
+            std_map.erase(std_map.begin());
+            ft_map.erase(ft_map.begin());           
+            ft_map.erase(ft_map.begin());
+
+            ft_printf_map(std_map, ft_map, " std_map ", " ft_map ");
+
+            std::cout << "std erase key_type = " << std_map.erase(2)  << " | " 
+                      << "ft erase key_type = " << C_GREEN << ft_map.erase(2) << C_RESET << std::endl << std::endl; 
+
+            std::cout << "std erase key_type = " << std_map.erase(2)  << " | " 
+                      << "ft erase key_type = " << C_GREEN << ft_map.erase(2) << C_RESET << std::endl << std::endl;
+
+            std::cout << "std erase key_type = " << std_map.erase(3)  << " | " 
+                      << "ft erase key_type = " << C_GREEN << ft_map.erase(3) << C_RESET << std::endl << std::endl;
+             
+            ft_printf_map(std_map, ft_map, " std_map ", " ft_map ");
+        
+            std::cout << C_BOLDMAGENTA << "erase range Iterator" << C_RESET << std::endl << std::endl;
+            
+            std::map<int, int>::iterator std_it = std_map.begin();
+            ft::map<int, int>::iterator ft_it = ft_map.begin();
+
+            for(int i = 0; i < 6; i++)
+            {
+                std_it++;
+                ft_it++;
+            }
+            
+            std_map.erase(std_map.begin(), std_it);
+            ft_map.erase(ft_map.begin(), ft_it);           
+            
+            ft_printf_map(std_map, ft_map, " std_map ", " ft_map ");
+
+            std::cout << C_BOLDMAGENTA << "swap" << C_RESET << std::endl << std::endl;
+            
+            std::cout << "***befor***" << std::endl;
+            
+            std::map<int, int> std_map3;
+            ft::map<int, int>  ft_map3;
+            
+            for (int i = 0; i < 10; i++)
+            {
+                std_map3.insert(std::pair< int, int>(i, i + 100));
+                ft_map3.insert(ft::pair< int, int>(i, i + 100));
+            }
+
+            ft_printf_map(std_map, ft_map, " std_map ", " ft_map ");
+            ft_printf_map(std_map3, ft_map3, " std_map3 ", " ft_map3 ");
+
+            std::cout << "***after***" << std::endl;
+
+            std_map.swap(std_map3);
+            ft_map.swap(ft_map3);
+
+            ft_printf_map(std_map, ft_map, " std_map ", " ft_map ");
+            ft_printf_map(std_map3, ft_map3, " std_map3 ", " ft_map3 ");
+            
+            std::cout << C_BOLDMAGENTA << "clear" << C_RESET << std::endl << std::endl;
+
+            std::cout << "***befor***" << std::endl;
+
+            ft_printf_map(std_map2, ft_map2, " std_map2 ", " ft_map2 ");            
+            ft_printf_map(std_map3, ft_map3, " std_map3 ", " ft_map3 ");            
+
+            std::cout << "***after***" << std::endl;
+
+            std_map2.clear();
+            std_map3.clear();
+            ft_map2.clear();
+            ft_map3.clear();            
+            
+            ft_printf_map(std_map2, ft_map2, " std_map2 ", " ft_map2 ");            
+            ft_printf_map(std_map3, ft_map3, " std_map3 ", " ft_map3 ");
+
+            std::cout << "..." << std::endl << std::endl;         
+            
+        }
+
+		/* ************************************************************************** */
+		/*                            		Operations:                               */
+		/* ************************************************************************** */
+
+        template <class T1, class T2>
+        void    ft_map_operation(T1& std_map, T2& ft_map) {
+
+            std::cout << C_YELLOW << "---------------------------Operations-------------------" << C_RESET << std::endl << std::endl;
+
+            std::cout << "std find = " << std_map.find(2)->first  << " | " 
+                      << "ft find = " << C_GREEN << ft_map.find(2)->first << C_RESET << std::endl << std::endl; 
+
+            std::cout << "std find = " << std_map.find(3)->first  << " | " 
+                      << "ft find = " << C_GREEN << ft_map.find(3)->first << C_RESET << std::endl << std::endl; 
+            
+            std::cout << "std count = " << std_map.count(4)  << " | " 
+                      << "ft count = " << C_GREEN << ft_map.count(4) << C_RESET << std::endl << std::endl;
+
+            std::cout << "std count = " << std_map.count(22)  << " | " 
+                      << "ft count = " << C_GREEN << ft_map.count(22) << C_RESET << std::endl << std::endl;
+            
+            std::cout << "std lower_bound = " << std_map.lower_bound(3)->first  << " | " 
+                      << "ft lower_bound = " << C_GREEN << ft_map.lower_bound(3)->first << C_RESET << std::endl << std::endl;             
+
+            std::cout << "std upper_bound = " << std_map.upper_bound(7)->first  << " | " 
+                      << "ft upper_bound = " << C_GREEN << ft_map.upper_bound(7)->first << C_RESET << std::endl << std::endl;
+
+            std::cout << "std equal_range = " << std_map.equal_range(7).first->first  << " | " 
+                      << "ft equal_range = " << C_GREEN << ft_map.equal_range(7).first->first << C_RESET << std::endl << std::endl; 
+        }
+
+		/* ************************************************************************** */
+		/*                                                                            */
+        /*                              Test SET :                                    */
+		/*                                                                            */
+		/* ************************************************************************** */
+
+		/* ************************************************************************** */
+		/*                                 Iterator:                                  */
+		/* ************************************************************************** */
+        
+        template <class T1, class T2>
+        void    ft_set_iterator(T1& std_set, T2& ft_set) {
+
+            std::cout << C_YELLOW << "---------------------------Iterator-------------------" << C_RESET << std::endl << std::endl;
+            
+            std::set<int>::iterator std_itb = std_set.begin();
+            ft::set<int>::iterator ft_itb = ft_set.begin();
+            
+            std::cout << "std iterator begin first second = " << std::setw(10) << *std_itb << " | " 
+                      << "ft iterator begin first second  = " << C_GREEN << *ft_itb << C_RESET << std::endl;  
+            
+            std::set<int>::iterator std_ite = std_set.end();
+            ft::set<int>::iterator ft_ite = ft_set.end();
+            
+            std_ite--;
+            ft_ite--;
+           
+            std::cout << "std iterator end first second   = " << std::setw(10) << *std_ite  << " | " 
+                      << "ft iterator end first second    = " << C_GREEN << *ft_ite << C_RESET << std::endl; 
+        
+            std::set<int>::reverse_iterator std_ritb = std_set.rbegin();
+            ft::set<int>::reverse_iterator ft_ritb = ft_set.rbegin();
+            
+            std::cout << "std reverse_iterator begin first second = " << std::setw(10) << *std_ritb << " | " 
+                      << "ft reverse_iterator begin first second  = " << C_GREEN << *ft_ritb << C_RESET << std::endl;  
+            
+            std::set<int>::reverse_iterator std_rite = std_set.rend();
+            ft::set<int>::reverse_iterator ft_rite = ft_set.rend();
+
+            std_rite--;
+            ft_rite--;
+
+            std::cout << "std reverse_iterator end first second   = " << std::setw(10) << *std_rite << " | " 
+                      << "ft reverse_iterator end first second    = " << C_GREEN << *ft_rite << C_RESET << std::endl << std::endl;
+
+            std_itb++;       
+            ++std_itb;
+            ft_itb++;       
+            ++ft_itb;
+
+            std_ritb++;       
+            ++std_ritb;
+            ft_ritb++;       
+            ++ft_ritb;
+            
+            std::cout << "after++ std iterator begin first second = " << std::setw(10) << *std_itb << " | " 
+                      << "after++ ft iterator begin first second  = " << C_GREEN << *ft_itb << C_RESET << std::endl;  
+            
+            std::cout << "after++ std iterator end first second   = " << std::setw(10) << *std_ite << " | " 
+                      << "after++ ft iterator end first second    = " << C_GREEN << *ft_ite << C_RESET << std::endl; 
+            
+            std::cout << "after++ std reverse_iterator begin first second = " << std::setw(10) << *std_ritb << " | " 
+                      << "after++ ft reverse_iterator begin first second  = " << C_GREEN << *ft_ritb << C_RESET << std::endl;
+            
+            std::cout << "after++ std reverse_iterator end first second   = " << std::setw(10) << *std_rite << " | " 
+                      << "after++ ft reverse_iterator end first second    = " << C_GREEN << *ft_rite << C_RESET << std::endl << std::endl;           
+                  
+        }
+		
+        /* ************************************************************************** */
+		/*                                 Capacity:                                  */
+		/* ************************************************************************** */
+        
+        template <class T1, class T2>
+        void    ft_set_capacity(T1& std_set, T2& ft_set) {
+            
+            std::cout << C_YELLOW << "---------------------------Capacity-------------------" << C_RESET << std::endl << std::endl;
+            
+            std::cout << "std empty = " << std_set.empty()  << " | " 
+                      << "ft empty = " << C_GREEN << ft_set.empty() << C_RESET << std::endl << std::endl;
+                      
+            std::cout << "std size = " << std_set.size()  << " | " 
+                      << "ft size = " << C_GREEN << ft_set.size() << C_RESET << std::endl << std::endl;
+
+            std::cout << "std max_size = " << std_set.max_size()  << " | " 
+                      << "ft max_size = " << C_GREEN << ft_set.max_size() << C_RESET << std::endl << std::endl;
+        }
+
+
+		/* ************************************************************************** */
+		/*                            		 Modifiers:                               */
+		/* ************************************************************************** */
+
+        template <class T1, class T2>
+        void    ft_set_modifiers(T1& std_set, T2& ft_set) {
+
+            std::cout << C_YELLOW << "---------------------------Modifiers-------------------" << C_RESET << std::endl << std::endl;
+            
+            ft_printf_set(std_set, ft_set, " std_set ", " ft_set ");
+            
+            std::cout << "std insert single (3) = " << std_set.insert(3).second  << " | " 
+                      << "ft insert single (3) = " << C_GREEN << ft_set.insert(3).second << C_RESET << std::endl << std::endl; 
+
+            std::cout << "std insert single (15) = " << std_set.insert(15).second  << " | " 
+                      << "ft insert single (15) = " << C_GREEN << ft_set.insert(15).second << C_RESET << std::endl << std::endl;
+
+            std::cout << "std insert single (15) = " << std_set.insert(15).second  << " | " 
+                      << "ft insert single (15) = " << C_GREEN << ft_set.insert(15).second << C_RESET << std::endl << std::endl;            
+            
+            ft_printf_set(std_set, ft_set, " std_set ", " ft_set ");
+
+            std::cout << "std insert hint (16) = " << *std_set.insert(std_set.begin(), 16)  << " | " 
+                      << "ft insert hint (16) = " << C_GREEN << *ft_set.insert(ft_set.begin(), 16) << C_RESET << std::endl << std::endl; 
+
+            std::cout << "std insert hint (17) = " << *std_set.insert(std_set.begin(), 17)  << " | " 
+                      << "ft insert hint (17) = " << C_GREEN << *ft_set.insert(ft_set.begin(), 17) << C_RESET << std::endl << std::endl;
+
+            std::cout << "std insert hint (18) = " << *std_set.insert(std_set.begin(), 18)  << " | " 
+                      << "ft insert hint (18) = " << C_GREEN << *ft_set.insert(ft_set.begin(), 18) << C_RESET << std::endl << std::endl;             
+
+            ft_printf_set(std_set, ft_set, " std_set ", " ft_set ");
+
+            std::set<int> std_set2;
+            ft::set<int>  ft_set2;
+            
+            for (int i = 30; i < 40; i++)
+            {
+                std_set2.insert(i);
+                ft_set2.insert(i);
+            }
+
+            std::cout << C_BOLDMAGENTA << "insert range InputIterator" << C_RESET << std::endl << std::endl;
+            
+            std_set.insert(std_set2.begin(), std_set2.end());
+            ft_set.insert(ft_set2.begin(), ft_set2.end());
+
+            ft_printf_set(std_set, ft_set, " std_set ", " ft_set ");
+            
+            std::cout << C_BOLDMAGENTA << "erase Iterator" << C_RESET << std::endl << std::endl;
+
+            std_set.erase(std_set.begin());
+            std_set.erase(std_set.begin());
+            ft_set.erase(ft_set.begin());           
+            ft_set.erase(ft_set.begin());
+
+            ft_printf_set(std_set, ft_set, " std_set ", " ft_set ");
+
+            std::cout << "std erase key_type = " << std_set.erase(2)  << " | " 
+                      << "ft erase key_type = " << C_GREEN << ft_set.erase(2) << C_RESET << std::endl << std::endl; 
+
+            std::cout << "std erase key_type = " << std_set.erase(2)  << " | " 
+                      << "ft erase key_type = " << C_GREEN << ft_set.erase(2) << C_RESET << std::endl << std::endl;
+
+            std::cout << "std erase key_type = " << std_set.erase(3)  << " | " 
+                      << "ft erase key_type = " << C_GREEN << ft_set.erase(3) << C_RESET << std::endl << std::endl;
+             
+            ft_printf_set(std_set, ft_set, " std_set ", " ft_set ");
+        
+            std::cout << C_BOLDMAGENTA << "erase range Iterator" << C_RESET << std::endl << std::endl;
+            
+            std::set<int>::iterator std_it = std_set.begin();
+            ft::set<int>::iterator ft_it = ft_set.begin();
+
+            for(int i = 0; i < 6; i++)
+            {
+                std_it++;
+                ft_it++;
+            }
+            
+            std_set.erase(std_set.begin(), std_it);
+            ft_set.erase(ft_set.begin(), ft_it);           
+            
+            ft_printf_set(std_set, ft_set, " std_set ", " ft_set ");
+
+            std::cout << C_BOLDMAGENTA << "swap" << C_RESET << std::endl << std::endl;
+            
+            std::cout << "***befor***" << std::endl;
+            
+            std::set<int> std_set3;
+            ft::set<int>  ft_set3;
+            
+            for (int i = 0; i < 10; i++)
+            {
+                std_set3.insert(i);
+                ft_set3.insert(i);
+            }
+
+            ft_printf_set(std_set, ft_set, " std_set ", " ft_set ");
+            ft_printf_set(std_set3, ft_set3, " std_set3 ", " ft_set3 ");
+
+            std::cout << "***after***" << std::endl;
+
+            std_set.swap(std_set3);
+            ft_set.swap(ft_set3);
+
+            ft_printf_set(std_set, ft_set, " std_set ", " ft_set ");
+            ft_printf_set(std_set3, ft_set3, " std_set3 ", " ft_set3 ");
+            
+            std::cout << C_BOLDMAGENTA << "clear" << C_RESET << std::endl << std::endl;
+
+            std::cout << "***befor***" << std::endl;
+
+            ft_printf_set(std_set2, ft_set2, " std_set2 ", " ft_set2 ");            
+            ft_printf_set(std_set3, ft_set3, " std_set3 ", " ft_set3 ");            
+
+            std::cout << "***after***" << std::endl;
+
+            std_set2.clear();
+            std_set3.clear();
+            ft_set2.clear();
+            ft_set3.clear();            
+            
+            ft_printf_set(std_set2, ft_set2, " std_set2 ", " ft_set2 ");            
+            ft_printf_set(std_set3, ft_set3, " std_set3 ", " ft_set3 ");
+
+            std::cout << "..." << std::endl << std::endl;         
+            
+        }
+
+		/* ************************************************************************** */
+		/*                            		Operations:                               */
+		/* ************************************************************************** */
+
+        template <class T1, class T2>
+        void    ft_set_operation(T1& std_set, T2& ft_set) {
+
+            std::cout << C_YELLOW << "---------------------------Operations-------------------" << C_RESET << std::endl << std::endl;
+
+            std::cout << "std find = " << *std_set.find(2)  << " | " 
+                      << "ft find = " << C_GREEN << *ft_set.find(2) << C_RESET << std::endl << std::endl; 
+
+            std::cout << "std find = " << *std_set.find(3)  << " | " 
+                      << "ft find = " << C_GREEN << *ft_set.find(3) << C_RESET << std::endl << std::endl; 
+            
+            std::cout << "std count = " << std_set.count(4)  << " | " 
+                      << "ft count = " << C_GREEN << ft_set.count(4) << C_RESET << std::endl << std::endl;
+
+            std::cout << "std count = " << std_set.count(22)  << " | " 
+                      << "ft count = " << C_GREEN << ft_set.count(22) << C_RESET << std::endl << std::endl;
+            
+            std::cout << "std lower_bound = " << *std_set.lower_bound(3)  << " | " 
+                      << "ft lower_bound = " << C_GREEN << *ft_set.lower_bound(3) << C_RESET << std::endl << std::endl;             
+
+            std::cout << "std upper_bound = " << *std_set.upper_bound(7)  << " | " 
+                      << "ft upper_bound = " << C_GREEN << *ft_set.upper_bound(7) << C_RESET << std::endl << std::endl;
+
+            std::cout << "std equal_range = " << *std_set.equal_range(7).first  << " | " 
+                      << "ft equal_range = " << C_GREEN << *ft_set.equal_range(7).first << C_RESET << std::endl << std::endl; 
+        }
 
 int main() {
 
@@ -465,13 +999,8 @@ int main() {
     
     std::map<int, int> std_map;
     ft::map<int, int>  ft_map;
-    ft::map<int, int>  ft_map_cpy;
 
-    ft_map_cpy.clear();
-    std::cout << "****TEST IT****" << std::endl;
-    ft::map<int, int>::iterator ft_itb = ft_map_cpy.begin();
-    std::cout << "ft_map = " << ft_map.get_root() << std::endl;
-    std::cout << "ft_itb_test = " << ft_itb->first << " - " << ft_itb->second << " | " << ft_map_cpy.get_root() << std::endl;
+    
     
     for (int i = 0; i < 10; i++)
     {
@@ -479,24 +1008,35 @@ int main() {
         ft_map.insert(ft::pair< int, int>(i, i + 40));
     }
 
-    ft_map.printTree();
-    std::cout << std::endl;
+    ft_printf_map(std_map, ft_map, " std_map ", " ft_map ");
     
     ft_map_iterator(std_map, ft_map);
+    ft_map_capacity(std_map, ft_map);
+    ft_map_element_access(std_map, ft_map);
+    ft_map_modifiers(std_map, ft_map);
+    ft_map_operation(std_map, ft_map);
 
-    std::cout << "****1***" << std::endl;
-    ft_map_cpy = ft_map;
-    ft_map.clear();
-    std::cout << "ft_map2           = " << ft_map.get_tnull() << std::endl;
-    std::cout << "ft_map2 root      = " << ft_map.get_root() << std::endl;
-    std::cout << "ft_map_cpy        = " <<  ft_map_cpy.get_tnull() << std::endl;
-    std::cout << "ft_map_cpy root   = " <<  ft_map_cpy.get_root() << std::endl;
-    std::cout << "****PRINT ft_map_cpy****" << std::endl;
-    ft_map_cpy.printTree();
-    std::cout << "FIN" << std::endl;
-    // ft_vec_capacity(std_map, ft_map);
-    // ft_vec_element_access(std_map, ft_map);
-    // ft_vec_modifier(std_map, ft_map);
+ 	std::cout << C_BLUE << "* ************************************************************************** *" << C_RESET << std::endl << std::endl;
+    std::cout << C_BLUE << "*                                 set                                        *" << C_RESET << std::endl << std::endl;
+    std::cout << C_BLUE << "* ************************************************************************** *" << C_RESET << std::endl << std::endl;  
+    
+    std::set<int> std_set;
+    ft::set<int>  ft_set;
+
+    
+    
+    for (int i = 0; i < 10; i++)
+    {
+        std_set.insert(i);
+        ft_set.insert(i);
+    }
+
+    ft_printf_set(std_set, ft_set, " std_set ", " ft_set ");
+    
+    ft_set_iterator(std_set, ft_set);
+    ft_set_capacity(std_set, ft_set);
+    ft_set_modifiers(std_set, ft_set);
+    ft_set_operation(std_set, ft_set);   
     
     return 0;
 }

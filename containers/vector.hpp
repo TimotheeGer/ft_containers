@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 16:49:09 by tigerber          #+#    #+#             */
-/*   Updated: 2022/06/01 18:59:28 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/08 14:44:24 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,6 +300,7 @@ namespace ft {
 					_size++;
 				}
 			};
+			
 			// range (3)
 			template <class InputIterator>
     		void					insert (iterator position, InputIterator first, InputIterator last, 

@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   iterator_map.hpp                                   :+:      :+:    :+:   */
+/*   iterator_set.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 15:28:38 by tigerber          #+#    #+#             */
-/*   Updated: 2022/06/08 15:16:12 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/08 20:01:41 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ITERATOR_MAP_HPP
-#define ITERATOR_MAP_HPP
+#ifndef ITERATOR_SET_HPP
+#define ITERATOR_SET_HPP
 
 #include <algorithm>
 #include <iostream>
@@ -31,14 +31,14 @@ namespace ft {
 		/* ************************************************************************** */
 			
 			template <typename T>
-			struct NodeStruct {
+			struct NodeStruct2 {
 
 				T pair;
-				NodeStruct *left;
-				NodeStruct *right;
-				NodeStruct *parent;
-				NodeStruct **root;
-				NodeStruct **tNULL;
+				NodeStruct2 *left;
+				NodeStruct2 *right;
+				NodeStruct2 *parent;
+				NodeStruct2 **root;
+				NodeStruct2 **tNULL;
 				
 				int color;
 			};
@@ -48,16 +48,16 @@ namespace ft {
 		/* ************************************************************************** */
 
 			template<bool _const, typename type_const, typename type_normal>
-			struct check_const_map;
+			struct check_const_set;
 
 			template<typename type_const, typename type_normal>
-			struct check_const_map<true, type_const, type_normal> {
+			struct check_const_set<true, type_const, type_normal> {
 
 				typedef type_const type;
 			};
 
 			template<typename type_const, typename type_normal>
-			struct check_const_map<false, type_const, type_normal> {
+			struct check_const_set<false, type_const, type_normal> {
 
 				typedef type_normal type;
 			};
@@ -66,8 +66,8 @@ namespace ft {
 		/*                         Iterator / Const Iterator: :                       */
 		/* ************************************************************************** */
 	
-	template<class key, class T, bool _const = false>
-	class map_iterator {
+	template<class key, bool _const = false>
+	class set_iterator {
 
 		/* ************************************************************************** */
 		/*                          Member type Definition                            */
@@ -75,14 +75,13 @@ namespace ft {
 		
 		public:
 		
-			typedef map_iterator<key, T, _const> 																		Self;
-    		typedef ft::pair<const key, T>																				value_type;
+			typedef set_iterator<key, _const> 																			Self;
+    		typedef key																									value_type;
 			typedef ptrdiff_t																							difference_type;
 			typedef std::bidirectional_iterator_tag 																	iterator_category;
-			
-			typedef typename check_const_map<_const, const value_type&, value_type&>::type								reference;
-			typedef typename check_const_map<_const, const value_type*, value_type*>::type								pointer;
-			typedef typename check_const_map<_const, const NodeStruct<value_type>*, NodeStruct<value_type>* >::type		NodePtr;
+			typedef typename check_const_set<_const, const value_type&, value_type&>::type								reference;
+			typedef typename check_const_set<_const, const value_type*, value_type*>::type								pointer;
+			typedef typename check_const_set<_const, const NodeStruct2<value_type>*, NodeStruct2<value_type>* >::type		NodePtr;
 
 		
 		/* ************************************************************************** */
@@ -95,14 +94,14 @@ namespace ft {
 		/*                               Constructor:                                 */
 		/* ************************************************************************** */
 		
-			map_iterator(void) : _pNode(NULL){};
+			set_iterator(void) : _pNode(NULL){};
 		
-			map_iterator(NodePtr n) :_pNode(n) {};
+			set_iterator(NodePtr n) :_pNode(n) {};
 
-			map_iterator(const map_iterator<key, T, false> &copy) : _pNode(copy._pNode) {};
-			map_iterator(const map_iterator<key, T, true> &copy) : _pNode(copy._pNode) {};
+			set_iterator(const set_iterator<key, false> &copy) : _pNode(copy._pNode) {};
+			set_iterator(const set_iterator<key, true> &copy) : _pNode(copy._pNode) {};
 		
-			virtual ~map_iterator() {};
+			virtual ~set_iterator() {};
 			
 			Self   &operator = (const Self &rhs) {
 				
@@ -132,7 +131,7 @@ namespace ft {
 			
 			Self operator++(int) {
 
-				map_iterator res(*this);
+				set_iterator res(*this);
 
 				if (_pNode == maximum(*_pNode->root))
 					_pNode = *_pNode->tNULL;
@@ -154,7 +153,7 @@ namespace ft {
 			
 			Self operator--(int) {
 
-				map_iterator res(*this);
+				set_iterator res(*this);
 				
 				if (_pNode == minimum(*_pNode->root))
 					_pNode = *_pNode->tNULL;

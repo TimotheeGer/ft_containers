@@ -6,7 +6,7 @@
 /*   By: tigerber <tigerber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 15:28:45 by tigerber          #+#    #+#             */
-/*   Updated: 2022/06/07 15:49:55 by tigerber         ###   ########.fr       */
+/*   Updated: 2022/06/08 20:07:59 by tigerber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,7 @@ namespace ft {
 			typedef ptrdiff_t										difference_type;
     		typedef size_t											size_type;
 			typedef NodeStruct<value_type>							Node;
-			// typedef NodeStruct<value_type, key_compare>				Node;
 			typedef NodeStruct<value_type>*							NodePtr;
-			// typedef NodeStruct<value_type, key_compare>*			NodePtr;
     		
 			typedef ft::map_iterator<key_type, mapped_type, false>	iterator;
     		typedef ft::map_iterator<key_type, mapped_type, true>	const_iterator;
@@ -182,23 +180,15 @@ namespace ft {
 			// Destructor(1)
 			~map() {
 
-				// std::cout << "-------------------------------------------------" << std::endl;
-				// std::cout << "GO DESTRUCTOR" << " - " << get_root() << std::endl;
-				
 				if (root == TNULL)
 				{
-					// std::cout << "TEST DESTRUC 1 size = " << _size << std::endl;
 					_size = 0;
 					deallocate_node(TNULL);
 					return ;
 				}
 				
 				if (_size > 0)
-				{
-					
-					// std::cout << "TEST DESTRUC 2 size = " << _size << std::endl;
 					clear();
-				}
 				_size = 0;
 				deallocate_node(TNULL);
 			};
@@ -228,8 +218,7 @@ namespace ft {
 
 			size_type	size() const { return _size; };
 
-			// size_type max_size() const { return _alloc.max_size(); };
-			size_type max_size() const { return 230584300921369395; };
+			size_type max_size() const { return _alloc.max_size(); };
 
 		/* ************************************************************************** */
 		/*                            	 Element Access:                              */
@@ -305,7 +294,6 @@ namespace ft {
 			// (3)	
 			void erase (iterator first, iterator last) {
 
-				// std::cout << "ERASE TEST" << std::endl;
 				iterator	tmp;
 
 				while (first != last)
@@ -335,46 +323,19 @@ namespace ft {
 				
 				x.update_root_tnull(x.root);
 				update_root_tnull(root);
-				// root->root = &root;
-				// root->tNULL = &TNULL;
-				
-				
 			};
 
 
-			void update_root_tnull(NodePtr n)
-			{
-				if(n->left)
-					update_root_tnull(n->left);
-				if(n->right)
-					update_root_tnull(n->right);
-				n->root = &root;
-				n->tNULL = &TNULL;
-			}
+
 
 			void clear() {
 
-				
-				// std::cout << "CLEAR" << std::endl;
-				// erase(begin(), end());
 				delete_tree(root);
-				// std::cout << "SIZE IN CLEAR = " << _size << std::endl;
 				root = TNULL;
 				_size = 0;
-				// std::cout << "C_FIN" << std::endl;
-				
 			};
 
-			void	delete_tree( NodePtr p )
-			{
-				if (p != TNULL)
-				{
-					delete_tree(p->left);
-					delete_tree(p->right);
-					deallocate_node(p);
-					_size--;
-				}
-			}
+
 
 		/* ************************************************************************** */
 		/*                             		Observers:                                */
@@ -504,7 +465,7 @@ namespace ft {
 		/*                           		  Utils:                                  */
 		/* ************************************************************************** */
 		
-		// private:
+		private:
 		
 		/* ************************************************************************** */
 		/*                           		 get/set:                                 */
@@ -516,6 +477,16 @@ namespace ft {
 
 			void		set_root(NodePtr p_root) { root = p_root; };
 			void		set_size(size_type size) { _size = size; };
+
+			void update_root_tnull(NodePtr n)
+			{
+				if(n->left)
+					update_root_tnull(n->left);
+				if(n->right)
+					update_root_tnull(n->right);
+				n->root = &root;
+				n->tNULL = &TNULL;
+			}
 
 		/* ************************************************************************** */
 		/*                           		 insert:                                  */
@@ -630,7 +601,7 @@ namespace ft {
 				while (x != TNULL)
 				{
 					y = x;
-					if (_comp(node->pair.first, x->pair.first)) //node < x
+					if (_comp(node->pair.first, x->pair.first))
 						x = x->left;
 					else 
 						x = x->right;
@@ -640,7 +611,7 @@ namespace ft {
 
 				if (y == NULL)
 					root = node;
-				else if (_comp(node->pair.first, y->pair.first)) //node < x
+				else if (_comp(node->pair.first, y->pair.first))
 					y->left = node;
 				else 
 					y->right = node; 
@@ -754,10 +725,7 @@ namespace ft {
 						node = node->left;
 				}
 				if (z == TNULL)
-				{
-					// std::cout << "Key not found in the tree" << std::endl;
 					return;
-				}
 
 				y = z;
 				int y_original_color = y->color;
@@ -809,6 +777,17 @@ namespace ft {
 				alloc_node.deallocate(node, 1);
 			}
 
+			void	delete_tree( NodePtr p )
+			{
+				if (p != TNULL)
+				{
+					delete_tree(p->left);
+					delete_tree(p->right);
+					deallocate_node(p);
+					_size--;
+				}
+			}
+
 		/* ************************************************************************** */
 		/*                           		 Min/Max:                                 */
 		/* ************************************************************************** */
@@ -845,7 +824,7 @@ namespace ft {
 				
 				if (node == TNULL || key == node->pair.first)
       				return node;
-    			if (_comp(key, node->pair.first)) //1) cree un node 2) node.pair.first = key 3) node < node
+    			if (_comp(key, node->pair.first))
     				return searchTreeKey(node->left, key);
     			return searchTreeKey(node->right, key);
   			}
@@ -878,21 +857,18 @@ namespace ft {
 				}
   			}
 		
-		public:
+		// public:
 
-			void printTree() {
+		// 	void printTree() {
     			
-				if (root) { printHelper(this->root, "", true); }
-  			}		
+		// 		if (root) { printHelper(this->root, "", true); }
+  		// 	}		
 	};
 
 		/* ************************************************************************** */
 		/*                       Non-member function overloads                        */
 		/* ************************************************************************** */
 		
-		// template< class Key, class T, class Compare, class Alloc >
-		// void swap( ft::map<Key,T,Compare,Alloc>& lhs, ft::map<Key,T,Compare,Alloc>& rhs ) { lhs.swap(rhs); }
-
 		template< class Key, class T, class Compare, class Alloc >
 		bool operator == ( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {
 			
@@ -923,6 +899,8 @@ namespace ft {
 		template< class Key, class T, class Compare, class Alloc >
 		bool operator>=( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) { return (!(rhs > lhs)); }
 
+		template< class Key, class T, class Compare, class Alloc >
+		void swap( ft::map<Key,T,Compare,Alloc>& lhs, ft::map<Key,T,Compare,Alloc>& rhs ) { lhs.swap(rhs); }
 
 };
 
